@@ -7,14 +7,6 @@ body {
   font-family: 'Gloria Hallelujah', cursive;
 }
 
-.container {
-  height: 552px;
-  width: 422px;
-  position: relative;
-  margin: 20px auto 0; 
-  overflow: hidden;
-}
-
 canvas {
   height: 552px;
   width: 422px;
