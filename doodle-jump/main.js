@@ -196,7 +196,7 @@ function spring(game) {
   };
 };
 
-function Game(ctx, scoreBoard, score_p, input_params_p) {
+function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index) {
   this.platforms = [],
   this.image = document.getElementById("sprite"),
   this.player, this.platformCount = 10,
@@ -212,6 +212,8 @@ function Game(ctx, scoreBoard, score_p, input_params_p) {
   this.scoreBoard = scoreBoard;
   this.score_p = score_p;
   this.input_params_p = input_params_p;
+  this.GA = genetic_algorithm;
+  this.index = index;
   this.base = new Base(this);
   this.player = new Player(this);
   for (var i = 0; i < this.platformCount; i++) {
@@ -219,7 +221,7 @@ function Game(ctx, scoreBoard, score_p, input_params_p) {
   }
   this.platform_broken_substitute = new Platform_broken_substitute(this);
   this.Spring = new spring(this);
-
+  this.died_message_sent = false;
   this.input_params = [];
 }
 
@@ -253,16 +255,15 @@ Game.prototype.playerCalc = function() {
   }
 
   //Adding keyboard controls
+  /*
   var self = this;
   document.onkeydown = function(e) {
     var key = e.keyCode;
     
     if (key == 37) {
-      self.dir = "left";
-      self.player.isMovingLeft = true;
+      self.goLeft();
     } else if (key == 39) {
-      self.dir = "right";
-      self.player.isMovingRight = true;
+      self.goRight();
     }
     
     if(key == 32) {
@@ -278,13 +279,12 @@ Game.prototype.playerCalc = function() {
     var key = e.keyCode;
   
     if (key == 37) {
-      self.dir = "left";
-      self.player.isMovingLeft = false;
+      self.stopMoving();
     } else if (key == 39) {
-      self.dir = "right";
-      self.player.isMovingRight = false;
+      self.stopMoving();
     }
   };
+  */
   
 
   //Accelerations produces when the user hold the keys
@@ -452,6 +452,9 @@ Game.prototype.gameOver = function() {
     p.y -= 12;
   });
 
+  this.GA.Population[this.index].fitness = this.score;
+  this.GA.Population[this.index].score = this.score;
+
   if(this.player.y > height/2 && this.flag === 0) {
     this.player.y -= 8;
     this.player.vy = 0;
@@ -459,6 +462,12 @@ Game.prototype.gameOver = function() {
   else if(this.player.y < height / 2) this.flag = 1;
   else if(this.player.y + this.player.height > height) {
     this.player.isDead = "lol";
+  }
+  
+  if (!this.died_message_sent) {
+    this.GA.gameDied(this);
+    window.cancelAnimationFrame(this.requestAnimId);
+    this.died_message_sent = true;
   }
 }
 
@@ -482,7 +491,8 @@ Game.prototype.update = function() {
   this.paintCanvas();
   this.platformCalc();
  
-  this.updateInputParams()
+  this.updateInputParams();
+  this.GA.activateBrain(this);
   this.base.last_y = this.base.y;
   this.player.last_y = this.player.y;
 
@@ -497,8 +507,10 @@ Game.prototype.update = function() {
 }
 
 Game.prototype.animloop = function() {
-  this.update();
-  requestAnimFrame(this.animloop.bind(this));
+  if (!this.died_message_sent) {
+    this.update();
+    this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
+  }
 };
 
 Game.prototype.reset = function() {
@@ -540,84 +552,19 @@ Game.prototype.showScore = function() {
   menu.style.zIndex = 1;
 }
 
-Game.prototype.playerJump = function() {
-  this.player.y += this.player.vy;
-  this.player.vy += this.gravity;
+Game.prototype.goLeft = function() {
+  this.dir = "left";
+  this.player.isMovingLeft = true;
+}
 
-  if (this.player.vy > 0 && 
-    (this.player.x + 15 < 260) && 
-    (this.player.x + this.player.width - 15 > 155) && 
-    (this.player.y + this.player.height > 475) && 
-    (this.player.y + this.player.height < 500))
-    this.player.jump();
+Game.prototype.goRight = function() {
+  this.dir = "right";
+  this.player.isMovingRight = true;
+}
 
-  if (this.dir == "left") {
-    this.player.dir = "left";
-    if (this.player.vy < -7 && this.player.vy > -15) this.player.dir = "left_land";
-  } else if (this.dir == "right") {
-    this.player.dir = "right";
-    if (this.player.vy < -7 && this.player.vy > -15) this.player.dir = "right_land";
-  }
-  var self = this;
-  //Adding keyboard controls
-  document.onkeydown = function(e) {
-    var key = e.keyCode;
-
-    if (key == 37) {
-      self.dir = "left";
-      self.player.isMovingLeft = true;
-    } else if (key == 39) {
-      self.dir = "right";
-      self.player.isMovingRight = true;
-    }
-  
-    if(key == 32) {
-      if(self.firstRun === true) {
-        self.init();
-        self.firstRun = false;
-      }
-      else 
-        self.reset();
-    }
-  };
-
-  document.onkeyup = function(e) {
-    var key = e.keyCode;
-
-    if (key == 37) {
-      this.dir = "left";
-      this.player.isMovingLeft = false;
-    } else if (key == 39) {
-      this.dir = "right";
-      this.player.isMovingRight = false;
-    }
-  };
-
-  //Accelerations produces when the user hold the keys
-  if (this.player.isMovingLeft === true) {
-    this.player.x += this.player.vx;
-    this.player.vx -= 0.15;
-  } else {
-    this.player.x += this.player.vx;
-    if (this.player.vx < 0) this.player.vx += 0.1;
-  }
-
-  if (this.player.isMovingRight === true) {
-    this.player.x += this.player.vx;
-    this.player.vx += 0.15;
-  } else {
-    this.player.x += this.player.vx;
-    if (this.player.vx > 0) this.player.vx -= 0.1;
-  }
-
-  //Jump the player when it hits the base
-  if ((this.player.y + this.player.height) > this.base.y && this.base.y < height) this.player.jump();
-
-  //Make the player move through walls
-  if (this.player.x > width) this.player.x = 0 - this.player.width;
-  else if (this.player.x < 0 - this.player.width) this.player.x = width;
-
-  this.player.draw();
+Game.prototype.stopMoving = function() {
+  this.player.isMovingLeft = false;
+  this.player.isMovingRight = false;
 }
 
 window.update = function(game) {
@@ -626,19 +573,24 @@ window.update = function(game) {
 }   
 
 
-function startOneGame(ctx, sb, sp, ip) {
-  var gameObj = new Game(ctx, sb, sp, ip);
+function startOneGame(ctx, sb, sp, ip, ga, i) {
+  var gameObj = new Game(ctx, sb, sp, ip, ga, i);
   gameObj.init();
 }
 
 function startAllGames() {
+  GA.createPopulation();
   for (var i = 0; i < NUMBER_OF_GAMES; i++) {
     var canvas = document.getElementById(`canvas_${i}`),
     ctx = canvas.getContext('2d');
     canvas.width = width;
     canvas.height = height;
-    startOneGame(ctx, `scoreBoard_${i}`, `score_${i}`, `input_params${i}`);
+    startOneGame(ctx, `scoreBoard_${i}`, `score_${i}`, `input_params${i}`, GA, i);
   }
+}
+
+function restartAllGames() {
+  startAllGames();
 }
 
 function main() {
@@ -657,4 +609,8 @@ function main() {
 }
 
 var NUMBER_OF_GAMES = 3;
+var TOP_UNIT_NUMBER = 2;
 main();
+
+var GA = new GeneticAlgorithm(NUMBER_OF_GAMES,TOP_UNIT_NUMBER);
+GA.reset();
