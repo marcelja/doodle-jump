@@ -55,6 +55,7 @@ function Player(game) {
   this.dir = "left";
 
   this.x = width / 2 - this.width / 2;
+  this.last_y = height;
   this.y = height;
 
   //Function to draw it
@@ -194,7 +195,7 @@ function spring(game) {
   };
 };
 
-function Game(ctx, scoreBoard, score_p) {
+function Game(ctx, scoreBoard, score_p, input_params_p) {
   this.platforms = [],
   this.image = document.getElementById("sprite"),
   this.player, this.platformCount = 10,
@@ -209,6 +210,7 @@ function Game(ctx, scoreBoard, score_p) {
   this.ctx = ctx;
   this.scoreBoard = scoreBoard;
   this.score_p = score_p;
+  this.input_params_p = input_params_p;
   this.base = new Base(this);
   this.player = new Player(this);
   for (var i = 0; i < this.platformCount; i++) {
@@ -216,6 +218,8 @@ function Game(ctx, scoreBoard, score_p) {
   }
   this.platform_broken_substitute = new Platform_broken_substitute(this);
   this.Spring = new spring(this);
+
+  this.input_params = [[0,0], [0,0], [0,0]];
 }
 
 Game.prototype.init = function() {
@@ -457,11 +461,28 @@ Game.prototype.gameOver = function() {
   }
 }
 
+Game.prototype.updateInputParams = function() {
+  var inputParamsText =  document.getElementById(this.input_params_p);
+  html = "[ <br>"
+  for (var i = 1; i <= 3; i++) {
+    this.input_params[i - 1][0] = Math.round(this.player.x - this.platforms[this.platforms.length-i].x);
+    this.input_params[i - 1][1] = Math.round(this.player.y - this.platforms[this.platforms.length-i].y);
+    html += "(" + this.input_params[i - 1][0] + "," + this.input_params[i - 1][1] + ") <br>"
+  }
+  html += "]"
+  this.input_params[3] = this.player.last_y - this.player.y;
+  html += "<br>Speed: " + this.input_params[3];
+  inputParamsText.innerHTML = html;
+}
+
 //Function to update everything
 
 Game.prototype.update = function() {
   this.paintCanvas();
   this.platformCalc();
+ 
+  this.updateInputParams()
+  this.player.last_y = this.player.y;
 
   this.springCalc();
 
@@ -603,8 +624,8 @@ window.update = function(game) {
 }   
 
 
-function startOneGame(ctx, sb, sp) {
-  var gameObj = new Game(ctx, sb, sp);
+function startOneGame(ctx, sb, sp, ip) {
+  var gameObj = new Game(ctx, sb, sp, ip);
   gameObj.init();
 }
 
@@ -613,11 +634,11 @@ function startAllGames() {
   ctx2 = canvas2.getContext('2d');
   canvas2.width = width;
   canvas2.height = height;
-  startOneGame(ctx2, "scoreBoard_2", "score_2");
+  startOneGame(ctx2, "scoreBoard_2", "score_2", "input_params2");
 
   var canvas = document.getElementById('canvas_1'),
   ctx = canvas.getContext('2d');
   canvas.width = width;
   canvas.height = height;
-  startOneGame(ctx, "scoreBoard_1", "score_1");
+  startOneGame(ctx, "scoreBoard_1", "score_1", "input_params1");
 }
