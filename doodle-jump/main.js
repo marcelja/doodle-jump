@@ -26,6 +26,7 @@ function Base(game) {
 
   this.x = 0;
   this.y = height - this.height;
+  this.last_y = this.y;
 
   this.draw = function() {
     try {
@@ -219,7 +220,7 @@ function Game(ctx, scoreBoard, score_p, input_params_p) {
   this.platform_broken_substitute = new Platform_broken_substitute(this);
   this.Spring = new spring(this);
 
-  this.input_params = [[0,0], [0,0], [0,0]];
+  this.input_params = [];
 }
 
 Game.prototype.init = function() {
@@ -463,16 +464,16 @@ Game.prototype.gameOver = function() {
 
 Game.prototype.updateInputParams = function() {
   var inputParamsText =  document.getElementById(this.input_params_p);
-  html = "[ <br>"
-  for (var i = 1; i <= 3; i++) {
-    this.input_params[i - 1][0] = Math.round(this.player.x - this.platforms[this.platforms.length-i].x);
-    this.input_params[i - 1][1] = Math.round(this.player.y - this.platforms[this.platforms.length-i].y);
-    html += "(" + this.input_params[i - 1][0] + "," + this.input_params[i - 1][1] + ") <br>"
+  if (this.base.last_y < this.base.y) {
+    this.input_params[0] = this.base.y - this.base.last_y;
+  } else {
+    this.input_params[0] = this.player.last_y - this.player.y;
   }
-  html += "]"
-  this.input_params[3] = this.player.last_y - this.player.y;
-  html += "<br>Speed: " + this.input_params[3];
-  inputParamsText.innerHTML = html;
+  for (var i = 0; i < 5; i++) {
+    this.input_params[i*2 + 1] = Math.round(this.player.x - this.platforms[this.platforms.length-i-1].x);
+    this.input_params[i*2 + 2] = Math.round(this.player.y - this.platforms[this.platforms.length-i-1].y);
+  }
+  inputParamsText.innerHTML = this.input_params;
 }
 
 //Function to update everything
@@ -482,6 +483,7 @@ Game.prototype.update = function() {
   this.platformCalc();
  
   this.updateInputParams()
+  this.base.last_y = this.base.y;
   this.player.last_y = this.player.y;
 
   this.springCalc();
