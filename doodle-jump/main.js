@@ -632,15 +632,29 @@ function startOneGame(ctx, sb, sp, ip) {
 }
 
 function startAllGames() {
-  var canvas2 = document.getElementById('canvas_2'),
-  ctx2 = canvas2.getContext('2d');
-  canvas2.width = width;
-  canvas2.height = height;
-  startOneGame(ctx2, "scoreBoard_2", "score_2", "input_params2");
-
-  var canvas = document.getElementById('canvas_1'),
-  ctx = canvas.getContext('2d');
-  canvas.width = width;
-  canvas.height = height;
-  startOneGame(ctx, "scoreBoard_1", "score_1", "input_params1");
+  for (var i = 0; i < NUMBER_OF_GAMES; i++) {
+    var canvas = document.getElementById(`canvas_${i}`),
+    ctx = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+    startOneGame(ctx, `scoreBoard_${i}`, `score_${i}`, `input_params${i}`);
+  }
 }
+
+function main() {
+  var game = document.getElementById('game');
+  var html = "";
+  for (var i = 0; i < NUMBER_OF_GAMES; i++) {
+    html += `<div class="wrapper">
+              <canvas id="canvas_${i}" style="margin-bottom:10px;margin-left:10px;border:1px solid #d3d3d3;"></canvas>
+              <div id="scoreBoard_${i}">
+                <p>Score: </p><p id="score_${i}">0</p>
+                <p>Input parameters: </p><p id="input_params${i}"></p>
+              </div>
+            </div>`;
+  }
+  game.innerHTML = html;
+}
+
+var NUMBER_OF_GAMES = 3;
+main();
