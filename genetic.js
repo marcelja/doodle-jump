@@ -68,6 +68,11 @@ GeneticAlgorithm.prototype = {
 			restartAllGames();
 		}
 	},
+
+	calculateFitness : function(game) {
+		this.Population[game.index].fitness = game.score;
+		this.Population[game.index].score = game.score;
+	},
 	
 	// evolves the population by performing selection, crossover and mutations on the units
 	evolvePopulation : function(){

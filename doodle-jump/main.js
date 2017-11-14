@@ -452,8 +452,7 @@ Game.prototype.gameOver = function() {
     p.y -= 12;
   });
 
-  this.GA.Population[this.index].fitness = this.score;
-  this.GA.Population[this.index].score = this.score;
+  this.GA.calculateFitness(this);
 
   if(this.player.y > height/2 && this.flag === 0) {
     this.player.y -= 8;
