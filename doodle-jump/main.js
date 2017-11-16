@@ -223,6 +223,8 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index
   this.Spring = new spring(this);
   this.died_message_sent = false;
   this.input_params = [];
+
+  this.iterationsSinceLastScoreIncrease = 0;
 }
 
 Game.prototype.init = function() {
@@ -350,9 +352,12 @@ Game.prototype.playerCalc = function() {
     if (this.player.vy >= 0) {
       this.player.y += this.player.vy;
       this.player.vy += this.gravity;
+    } else {
+      this.score++;
+      this.iterationsSinceLastScoreIncrease = 0;
     }
 
-    this.score++;
+    
   }
 
   //Make the player jump when it collides with platforms
@@ -503,6 +508,11 @@ Game.prototype.update = function() {
   this.base.draw();
 
   this.updateScore();
+  this.iterationsSinceLastScoreIncrease++;
+  if (this.iterationsSinceLastScoreIncrease == 500) {
+    //this equals about 6 jumps without gaining permanent height
+    this.gameOver();
+  }
 }
 
 Game.prototype.animloop = function() {
