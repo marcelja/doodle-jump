@@ -517,7 +517,9 @@ Game.prototype.update = function() {
 
 Game.prototype.animloop = function() {
   if (!this.died_message_sent) {
-    this.update();
+    for (var i = 0; i < SPEED_UP_FACTOR; i++) {
+      this.update();
+    }
     this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
   }
 };
@@ -619,6 +621,7 @@ function main() {
 
 var NUMBER_OF_GAMES = 3;
 var TOP_UNIT_NUMBER = 2;
+var SPEED_UP_FACTOR = 3;
 main();
 
 var GA = new GeneticAlgorithm(NUMBER_OF_GAMES,TOP_UNIT_NUMBER);
