@@ -9,8 +9,6 @@ window.requestAnimFrame = (function() {
 var width = 422,
   height = 552;
 
-
-
 //Base object
 function Base(game) {
   this.height = 5;
@@ -88,7 +86,7 @@ function Platform(game) {
   this.width = 70;
   this.height = 17;
 
-  this.x = Math.random() * (width - this.width);
+  this.x = game.rng.uniform() * (width - this.width);
   this.y = game.position;
 
   game.position += (height / game.platformCount);
@@ -216,6 +214,7 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index
   this.index = index;
   this.base = new Base(this);
   this.player = new Player(this);
+  this.rng = new RNG(RNGSEED);
   for (var i = 0; i < this.platformCount; i++) {
     this.platforms.push(new Platform(this));
   }
@@ -590,6 +589,7 @@ function startOneGame(ctx, sb, sp, ip, ga, i) {
 }
 
 function startAllGames() {
+  RNGSEED = Math.random();
   GA.createPopulation();
   for (var i = 0; i < NUMBER_OF_GAMES; i++) {
     var canvas = document.getElementById(`canvas_${i}`),
@@ -624,5 +624,6 @@ var TOP_UNIT_NUMBER = 2;
 var SPEED_UP_FACTOR = 3;
 main();
 
+var RNGSEED = Math.random();
 var GA = new GeneticAlgorithm(NUMBER_OF_GAMES,TOP_UNIT_NUMBER);
 GA.reset();
