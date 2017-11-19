@@ -481,7 +481,7 @@ Game.prototype.updateInputParams = function() {
   } else {
     this.input_params[0] = this.player.last_y - this.player.y;
   }
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 10; i++) {
     this.input_params[i*2 + 1] = Math.round(this.player.x - this.platforms[this.platforms.length-i-1].x);
     this.input_params[i*2 + 2] = Math.round(this.player.y - this.platforms[this.platforms.length-i-1].y);
   }
@@ -590,7 +590,6 @@ function startOneGame(ctx, sb, sp, ip, ga, i) {
 
 function startAllGames() {
   RNGSEED = Math.random();
-  GA.createPopulation();
   for (var i = 0; i < NUMBER_OF_GAMES; i++) {
     var canvas = document.getElementById(`canvas_${i}`),
     ctx = canvas.getContext('2d');
@@ -601,14 +600,15 @@ function startAllGames() {
 }
 
 function restartAllGames() {
-  updateStats()
+  updateStats();
   startAllGames();
 }
 
 function updateStats () {
   document.getElementById("generation").innerHTML = "Generation: " + GA.iteration;
   document.getElementById("best_generation").innerHTML = "The best unit was born in population " + GA.best_population;
-  document.getElementById("best_fitness").innerHTML = "Best score: " + GA.best_score;
+  document.getElementById("best_score").innerHTML = "Best score: " + GA.best_score;
+  document.getElementById("best_fitness").innerHTML = "Best fitness: " + GA.best_fitness;
 }
 
 function main() {
@@ -628,6 +628,7 @@ function main() {
   var stats = document.getElementById('stats');
   var statsHtml = `<p id="generation">Generation: 1</p>
                    <p id="best_generation">The best unit was born in generation 1</p>
+                   <p id="best_score">Best score: 0</p>
                    <p id="best_fitness">Best fitness: 0</p>`;
   stats.innerHTML = statsHtml;
 }
@@ -640,3 +641,4 @@ main();
 var RNGSEED = Math.random();
 var GA = new GeneticAlgorithm(NUMBER_OF_GAMES,TOP_UNIT_NUMBER);
 GA.reset();
+GA.createPopulation();

@@ -65,7 +65,8 @@ GeneticAlgorithm.prototype = {
 		if (this.alive == 0) {
 			this.evolvePopulation();
 			this.iteration++;
-			restartAllGames();
+            this.alive = this.max_units;
+            restartAllGames();
 		}
 	},
 
