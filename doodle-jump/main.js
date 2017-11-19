@@ -601,7 +601,14 @@ function startAllGames() {
 }
 
 function restartAllGames() {
+  updateStats()
   startAllGames();
+}
+
+function updateStats () {
+  document.getElementById("generation").innerHTML = "Generation: " + GA.iteration;
+  document.getElementById("best_generation").innerHTML = "The best unit was born in population " + GA.best_population;
+  document.getElementById("best_fitness").innerHTML = "Best score: " + GA.best_score;
 }
 
 function main() {
@@ -617,10 +624,16 @@ function main() {
             </div>`;
   }
   game.innerHTML = html;
+
+  var stats = document.getElementById('stats');
+  var statsHtml = `<p id="generation">Generation: 1</p>
+                   <p id="best_generation">The best unit was born in generation 1</p>
+                   <p id="best_fitness">Best fitness: 0</p>`;
+  stats.innerHTML = statsHtml;
 }
 
-var NUMBER_OF_GAMES = 3;
-var TOP_UNIT_NUMBER = 2;
+var NUMBER_OF_GAMES = 16;
+var TOP_UNIT_NUMBER = 4;
 var SPEED_UP_FACTOR = 3;
 main();
 

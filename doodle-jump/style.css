@@ -20,6 +20,12 @@ canvas {
   border: 1px solid black;
 }
 
+#stats {
+  padding-left: 50px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
 #scoreBoard {
   width: 420px;
   height: 50px;
@@ -74,10 +80,9 @@ h3 a {color: #5a5816}
   font-size: 12px;
   line-height: 31px;
   text-decoration: none;
-  position: absolute;
+  position: fixed;
   left: 50%;
-  bottom: 50px;
-  margin-left: -53px;
+  top: 5%;
 }
 
 .button.tweet {bottom: 100px; background-position: 0 -90px}
