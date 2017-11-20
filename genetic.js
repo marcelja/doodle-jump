@@ -30,8 +30,8 @@ GeneticAlgorithm.prototype = {
 		
 		for (var i=0; i<this.max_units; i++){
 			// create a new unit by generating a random Synaptic neural network
-			// with 12 neurons in the input layer, 20 neurons in the hidden layer and 2 neuron in the output layer
-			var newUnit = new synaptic.Architect.Perceptron(12, 20, 2);
+			// with 12 neurons in the input layer, 20 neurons in the hidden layer and 3 neuron in the output layer
+			var newUnit = new synaptic.Architect.Perceptron(8, 20, 3);
 			
 			// set additional parameters for the new unit
 			newUnit.index = i;
@@ -55,9 +55,9 @@ GeneticAlgorithm.prototype = {
 		var outputs = this.Population[game.index].activate(inputs);
 			
 		// perform flap if output is greater than 0.5
-		if (outputs[0] > 0.5 && outputs[1] > 0.5) game.goLeft();
-		if (outputs[0] > 0.5 && outputs[1] <= 0.5) game.goRight();
-		if (outputs[0] <= 0.5) game.stopMoving();
+		if (outputs[0] > outputs[1] && outputs[0] > outputs[2]) game.goLeft();
+		if (outputs[1] >= outputs[0] && outputs[1] > outputs[2]) game.goRight();
+		if (outputs[2] >= outputs[0] && outputs[2] >= outputs[1]) game.stopMoving();
 	},
 
 	gameDied : function(game){

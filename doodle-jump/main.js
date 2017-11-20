@@ -479,17 +479,32 @@ Game.prototype.gameOver = function() {
 
 Game.prototype.updateInputParams = function() {
   var inputParamsText =  document.getElementById(this.input_params_p);
-  if (this.base.last_y < this.base.y) {
-    this.input_params[0] = this.base.y - this.base.last_y;
-  } else {
-    this.input_params[0] = this.player.last_y - this.player.y;
-  }
+  
+  this.platforms.sort(function(platformA, platformB) {
+    return platformB.y - platformA.y;
+  });
   this.input_params[0] = this.player.vy;
   this.input_params[1] = this.player.vx;
-  for (var i = 0; i < 10; i++) {
-    this.input_params[i*2 + 2] = Math.round(this.player.x - this.platforms[this.platforms.length-i-1].x);
-    this.input_params[i*2 + 3] = Math.round(this.player.y - this.platforms[this.platforms.length-i-1].y);
+  firstAboveFound = false;
+  platformsFound = 0;
+  for (var i = 0; i < this.platforms.length; i++) {
+    if (this.platforms[i].y >= this.player.y) {
+      if (!firstAboveFound) {
+        firstAboveFound = true;
+        if (i > 0) {
+          this.input_params[2+platformsFound*2] = this.player.x - this.platforms[i].x;
+          this.input_params[3+platformsFound*2] = this.player.y - this.platforms[i].y;
+          platformsFound++;
+        }
+      }
+      if (platformsFound < 3) {
+        this.input_params[2+platformsFound*2] = this.player.x - this.platforms[i].x;
+        this.input_params[3+platformsFound*2] = this.player.y - this.platforms[i].y;
+        platformsFound++;
+      }
+    }
   }
+
   inputParamsText.innerHTML = this.input_params;
 }
 
@@ -583,12 +598,6 @@ Game.prototype.stopMoving = function() {
   this.player.isMovingLeft = false;
   this.player.isMovingRight = false;
 }
-
-window.update = function(game) {
-  game.ctx.clearRect(0, 0, width, height);
-  game.playerJump();
-}   
-
 
 function startOneGame(ctx, sb, sp, ip, ga, i) {
   var gameObj = new Game(ctx, sb, sp, ip, ga, i);
