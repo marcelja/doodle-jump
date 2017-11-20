@@ -481,9 +481,11 @@ Game.prototype.updateInputParams = function() {
   } else {
     this.input_params[0] = this.player.last_y - this.player.y;
   }
+  this.input_params[0] = this.player.vy;
+  this.input_params[1] = this.player.vx;
   for (var i = 0; i < 10; i++) {
-    this.input_params[i*2 + 1] = Math.round(this.player.x - this.platforms[this.platforms.length-i-1].x);
-    this.input_params[i*2 + 2] = Math.round(this.player.y - this.platforms[this.platforms.length-i-1].y);
+    this.input_params[i*2 + 2] = Math.round(this.player.x - this.platforms[this.platforms.length-i-1].x);
+    this.input_params[i*2 + 3] = Math.round(this.player.y - this.platforms[this.platforms.length-i-1].y);
   }
   inputParamsText.innerHTML = this.input_params;
 }
@@ -517,7 +519,9 @@ Game.prototype.update = function() {
 Game.prototype.animloop = function() {
   if (!this.died_message_sent) {
     for (var i = 0; i < SPEED_UP_FACTOR; i++) {
-      this.update();
+      if (!this.died_message_sent) {
+        this.update();
+      }
     }
     this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
   }
