@@ -133,9 +133,9 @@ GeneticAlgorithm.prototype = {
 		}
 		
 		// sort the units of the new population	in ascending order by their index
-		this.Population.sort(function(unitA, unitB){
-			return unitA.index - unitB.index;
-		});
+		//this.Population.sort(function(unitA, unitB){
+		//	return unitA.index - unitB.index;
+		//});
 	},
 
 	// selects the best units from the current population

@@ -320,8 +320,11 @@ Game.prototype.playerCalc = function() {
   if (this.base.y > height && (this.player.y + this.player.height) > height && this.player.isDead != "lol") this.player.isDead = true;
 
   //Make the player move through walls
-  if (this.player.x > width) this.player.x = 0 - this.player.width;
-  else if (this.player.x < 0 - this.player.width) this.player.x = width;
+  if (this.player.x > width) {
+    this.gameOver();
+  } else if (this.player.x < 0 - this.player.width) {
+    this.gameOver();
+  } 
 
   //Movement of player affected by gravity
   if (this.player.y >= (height / 2) - (this.player.height / 2)) {
@@ -593,7 +596,7 @@ function startOneGame(ctx, sb, sp, ip, ga, i) {
 }
 
 function startAllGames() {
-  RNGSEED = Math.random();
+  //RNGSEED = Math.random();
   for (var i = 0; i < NUMBER_OF_GAMES; i++) {
     var canvas = document.getElementById(`canvas_${i}`),
     ctx = canvas.getContext('2d');
@@ -611,8 +614,8 @@ function restartAllGames() {
 function updateStats () {
   document.getElementById("generation").innerHTML = "Generation: " + GA.iteration;
   document.getElementById("best_generation").innerHTML = "The best unit was born in population " + GA.best_population;
-  document.getElementById("best_score").innerHTML = "Best score: " + GA.best_score;
-  document.getElementById("best_fitness").innerHTML = "Best fitness: " + GA.best_fitness;
+  document.getElementById("best_score").innerHTML += " " + GA.best_score;
+  document.getElementById("best_fitness").innerHTML += " " + GA.best_fitness;
 }
 
 function main() {
@@ -632,8 +635,8 @@ function main() {
   var stats = document.getElementById('stats');
   var statsHtml = `<p id="generation">Generation: 1</p>
                    <p id="best_generation">The best unit was born in generation 1</p>
-                   <p id="best_score">Best score: 0</p>
-                   <p id="best_fitness">Best fitness: 0</p>`;
+                   <p id="best_score">Best score:</p>
+                   <p id="best_fitness">Best fitness:</p>`;
   stats.innerHTML = statsHtml;
 }
 
