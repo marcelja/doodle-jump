@@ -605,7 +605,7 @@ function startOneGame(ctx, sb, sp, ip, ga, i) {
 }
 
 function startAllGames() {
-  //RNGSEED = Math.random();
+  RNGSEED = Math.random();
   for (var i = 0; i < NUMBER_OF_GAMES; i++) {
     var canvas = document.getElementById(`canvas_${i}`),
     ctx = canvas.getContext('2d');
@@ -624,6 +624,7 @@ function updateStats () {
   document.getElementById("generation").innerHTML = "Generation: " + GA.iteration;
   document.getElementById("best_generation").innerHTML = "The best unit was born in population " + GA.best_population;
   document.getElementById("best_score").innerHTML += " " + GA.best_score;
+  document.getElementById("best_score_gen").innerHTML += " " + GA.selection()[0].score;
   document.getElementById("best_fitness").innerHTML += " " + GA.best_fitness;
 }
 
@@ -645,6 +646,7 @@ function main() {
   var statsHtml = `<p id="generation">Generation: 1</p>
                    <p id="best_generation">The best unit was born in generation 1</p>
                    <p id="best_score">Best score:</p>
+                   <p id="best_score_gen">Best score per generation:</p>
                    <p id="best_fitness">Best fitness:</p>`;
   stats.innerHTML = statsHtml;
 }
