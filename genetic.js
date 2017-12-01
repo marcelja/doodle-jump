@@ -3,6 +3,7 @@
 /***********************************************************************************/
 
 var GeneticAlgorithm = function(max_units, top_units){
+    this.best_players = []
 	this.max_units = max_units; // max number of units in population
 	this.top_units = top_units; // number of top units (winners) used for evolving population
 	
@@ -79,7 +80,7 @@ GeneticAlgorithm.prototype = {
 	evolvePopulation : function(){
 		// select the top units of the current population to get an array of winners
 		// (they will be copied to the next population)
-		var Winners = this.selection();
+        var Winners = this.selection();
 
 		if (this.mutateRate == 1 && Winners[0].fitness < 0){ 
 			// If the best unit from the initial population has a negative fitness 
@@ -134,13 +135,14 @@ GeneticAlgorithm.prototype = {
 		
 		// sort the units of the new population	in ascending order by their index
 		//this.Population.sort(function(unitA, unitB){
-		//	return unitA.index - unitB.index;
 		//});
 	},
 
 	// selects the best units from the current population
 	selection : function(){
 		// sort the units of the current population	in descending order by their fitness
+
+        this.Population.concat(this.best_players);
 		var sortedPopulation = this.Population.sort(
 			function(unitA, unitB){
 				return unitB.fitness - unitA.fitness;
@@ -151,6 +153,7 @@ GeneticAlgorithm.prototype = {
 		for (var i=0; i<this.top_units; i++) this.Population[i].isWinner = true;
 		
 		// return an array of the top units from the current population
+        this.best_players = sortedPopulation.slice(0, this.top_units);
 		return sortedPopulation.slice(0, this.top_units);
 	},
 	
