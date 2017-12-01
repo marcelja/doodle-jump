@@ -663,9 +663,20 @@ function main() {
   stats.innerHTML = statsHtml;
 }
 
+slider = document.getElementById('speedUp');
+
+slider.oninput = function() {
+    SPEED_UP_FACTOR = document.getElementById('speedUp').value;
+    document.getElementById('speedUpValue').innerHTML = SPEED_UP_FACTOR;
+
+
+    speedUpValue
+}
+
 var NUMBER_OF_GAMES = 8;
 var TOP_UNIT_NUMBER = 4;
-var SPEED_UP_FACTOR = 3;
+var SPEED_UP_FACTOR = 1;
+document.getElementById('speedUpValue').innerHTML = SPEED_UP_FACTOR;
 main();
 
 var RNGSEED = Math.random();
