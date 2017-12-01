@@ -111,6 +111,11 @@ function Platform(game) {
       else if (this.type == 4 && this.state === 0) this.cy = 90;
       else if (this.type == 4 && this.state == 1) this.cy = 1000;
 
+      for (var i=0; i<game.inputPlatforms.length; i++) {
+        if (game.platforms[game.inputPlatforms[i]].y == this.y) {
+          this.cy = 61;
+        }
+      }
       game.ctx.drawImage(game.image, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height);
     } catch (e) {}
   };
@@ -222,14 +227,17 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index
   this.Spring = new spring(this);
   this.died_message_sent = false;
   this.input_params = [];
+  this.inputPlatforms = [];
 
   this.iterationsSinceLastScoreIncrease = 0;
+  this.diedByStayingOnPlatform = 0;
+  this.diedByHittingWall = 0;
 }
 
 Game.prototype.init = function() {
   //Variables for the game
   this.dir = "left";
-  
+  this.calculateInputParams();
   this.firstRun = false;
 
   this.animloop();
@@ -321,8 +329,10 @@ Game.prototype.playerCalc = function() {
 
   //Make the player move through walls
   if (this.player.x > width) {
+    this.diedByHittingWall = 1;
     this.gameOver();
   } else if (this.player.x < 0 - this.player.width) {
+    this.diedByHittingWall = 1;
     this.gameOver();
   } 
 
@@ -435,6 +445,7 @@ Game.prototype.collides = function() {
       } else if (p.flag == 1) return;
       else {
         self.player.jump();
+        self.calculateInputParams();
       }
     }
   });
@@ -480,32 +491,41 @@ Game.prototype.gameOver = function() {
 Game.prototype.updateInputParams = function() {
   var inputParamsText =  document.getElementById(this.input_params_p);
   
-  this.platforms.sort(function(platformA, platformB) {
-    return platformB.y - platformA.y;
-  });
   this.input_params[0] = this.player.vy;
   this.input_params[1] = this.player.vx;
-  firstAboveFound = false;
-  platformsFound = 0;
-  for (var i = 0; i < this.platforms.length; i++) {
-    if (this.platforms[i].y >= this.player.y) {
-      if (!firstAboveFound) {
-        firstAboveFound = true;
-        if (i > 0) {
-          this.input_params[2+platformsFound*2] = this.player.x - this.platforms[i].x;
-          this.input_params[3+platformsFound*2] = this.player.y - this.platforms[i].y;
-          platformsFound++;
-        }
-      }
-      if (platformsFound < 3) {
-        this.input_params[2+platformsFound*2] = this.player.x - this.platforms[i].x;
-        this.input_params[3+platformsFound*2] = this.player.y - this.platforms[i].y;
-        platformsFound++;
-      }
-    }
+
+  for (var i = 0; i < this.inputPlatforms.length; i++) {
+    this.input_params[2+i*2] = this.player.x - this.platforms[this.inputPlatforms[i]].x;
+    this.input_params[3+i*2] = this.player.y - this.platforms[this.inputPlatforms[i]].y;
   }
 
   inputParamsText.innerHTML = this.input_params;
+}
+
+Game.prototype.calculateInputParams = function() {
+  this.platforms.sort(function(platformA, platformB) {
+    return platformB.y - platformA.y;
+  });
+
+  firstAboveFound = false;
+  platformsFound = 0;
+  for (var i = 0; i < this.platforms.length; i++) {
+    if (this.platforms[i].y <= this.player.y) {
+      if (i > 0 && i < this.platforms.length - 1) {
+        this.inputPlatforms[platformsFound] = i;
+        platformsFound++;
+        break;
+      } else {
+        this.inputPlatforms[platformsFound] = i;
+        platformsFound++;
+        break;
+      }
+      
+    }
+    if (i == this.platforms.length - 1) {
+      console.log('nothing found');
+    }
+  }
 }
 
 //Function to update everything
@@ -530,6 +550,7 @@ Game.prototype.update = function() {
   this.iterationsSinceLastScoreIncrease++;
   if (this.iterationsSinceLastScoreIncrease == 500) {
     //this equals about 6 jumps without gaining permanent height
+    this.diedByStayingOnPlatform = 1;
     this.gameOver();
   }
 }
