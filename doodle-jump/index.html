@@ -6,12 +6,18 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <div class="container">
+    <div class="container" id="statsContainer">
       <div id="mainMenu">
         <a class="button" href="javascript:startAllGames()">Start all games</a>
       </div>
 
-      <div id="stats"></div>
+      <div id="gamestats">
+        <div id="stats"></div>
+        <div id="slidercontainer">
+          <input type="range" min="0" max="9" value="0" class="slider" id="speedUp">
+          <p>Game speed up factor: <span id="speedUpValue"></span></p>
+        </div>
+      </div>
 
       <div id="statsCanvas"></div>
     </div>
