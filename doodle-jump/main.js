@@ -111,11 +111,11 @@ function Platform(game) {
       else if (this.type == 4 && this.state === 0) this.cy = 90;
       else if (this.type == 4 && this.state == 1) this.cy = 1000;
 
-      for (var i=0; i<game.inputPlatforms.length; i++) {
-        if (game.platforms[game.inputPlatforms[i]].y == this.y) {
-          this.cy = 61;
-        }
-      }
+      // for (var i=0; i<game.inputPlatforms.length; i++) {
+      //   if (game.platforms[game.inputPlatforms[i]].y == this.y) {
+      //     this.cy = 61;
+      //   }
+      // }
       game.ctx.drawImage(game.image, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height);
     } catch (e) {}
   };
@@ -495,11 +495,11 @@ Game.prototype.updateInputParams = function() {
   this.input_params[1] = this.player.vx;
 
   for (var i = 0; i < this.inputPlatforms.length; i++) {
-    this.input_params[2+i*2] = this.player.x - this.platforms[this.inputPlatforms[i]].x;
-    this.input_params[3+i*2] = this.player.y - this.platforms[this.inputPlatforms[i]].y;
+    this.input_params[2+i*2] = this.player.x - this.inputPlatforms[i].x;
+    this.input_params[3+i*2] = this.player.y - this.inputPlatforms[i].y;
   }
 
-  inputParamsText.innerHTML = this.input_params;
+  // inputParamsText.innerHTML = this.input_params;
 }
 
 Game.prototype.calculateInputParams = function() {
@@ -507,29 +507,20 @@ Game.prototype.calculateInputParams = function() {
     return platformB.y - platformA.y;
   });
 
-  firstAboveFound = false;
-  platformsFound = 0;
+  var maxPlayerHeight = this.player.y - 201;
+
   for (var i = 0; i < this.platforms.length; i++) {
-    if (this.platforms[i].y <= this.player.y) {
-      if (i > 0 && i < this.platforms.length - 1) {
-        this.inputPlatforms[platformsFound] = i;
-        platformsFound++;
-        break;
-      } else {
-        this.inputPlatforms[platformsFound] = i;
-        platformsFound++;
-        break;
-      }
-      
-    }
-    if (i == this.platforms.length - 1) {
-      console.log('nothing found');
+    if (this.platforms[i].y < maxPlayerHeight) {
+      this.inputPlatforms[0] = this.platforms[i-3];
+      this.inputPlatforms[1] = this.platforms[i-2];
+      this.inputPlatforms[2] = this.platforms[i-1];
+      break;
     }
   }
+  console.log(this.platforms);
 }
 
 //Function to update everything
-
 Game.prototype.update = function() {
   this.paintCanvas();
   this.platformCalc();
@@ -672,7 +663,7 @@ function main() {
   stats.innerHTML = statsHtml;
 }
 
-var NUMBER_OF_GAMES = 16;
+var NUMBER_OF_GAMES = 8;
 var TOP_UNIT_NUMBER = 4;
 var SPEED_UP_FACTOR = 3;
 main();
