@@ -503,21 +503,23 @@ Game.prototype.updateInputParams = function() {
 }
 
 Game.prototype.calculateInputParams = function() {
-  this.platforms.sort(function(platformA, platformB) {
+  var platform_helper = [];
+  for (var i = 0; i < this.platforms.length; i++) {
+    platform_helper.push(this.platforms[i]);
+  }
+
+  platform_helper.sort(function(platformA, platformB) {
     return platformB.y - platformA.y;
   });
 
-  var maxPlayerHeight = this.player.y - 201;
-
-  for (var i = 0; i < this.platforms.length; i++) {
-    if (this.platforms[i].y < maxPlayerHeight) {
-      this.inputPlatforms[0] = this.platforms[i-3];
-      this.inputPlatforms[1] = this.platforms[i-2];
-      this.inputPlatforms[2] = this.platforms[i-1];
+  for (var i = 0; i < platform_helper.length; i++) {
+    if (platform_helper[i].y < this.player.y) {
+      this.inputPlatforms[0] = platform_helper[i];
+      this.inputPlatforms[1] = platform_helper[i+1];
+      this.inputPlatforms[2] = platform_helper[i+2];
       break;
     }
   }
-  console.log(this.platforms);
 }
 
 //Function to update everything
@@ -539,7 +541,7 @@ Game.prototype.update = function() {
 
   this.updateScore();
   this.iterationsSinceLastScoreIncrease++;
-  if (this.iterationsSinceLastScoreIncrease == 500) {
+  if (this.iterationsSinceLastScoreIncrease == 200) {
     //this equals about 6 jumps without gaining permanent height
     this.diedByStayingOnPlatform = 1;
     this.gameOver();
