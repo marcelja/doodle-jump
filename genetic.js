@@ -31,7 +31,7 @@ GeneticAlgorithm.prototype = {
 		for (var i=0; i<this.max_units; i++){
 			// create a new unit by generating a random Synaptic neural network
 			// with 12 neurons in the input layer, 20 neurons in the hidden layer and 3 neuron in the output layer
-			var newUnit = new synaptic.Architect.Perceptron(8, 20, 3);
+			var newUnit = new synaptic.Architect.Perceptron(4, 20, 3);
 			
 			// set additional parameters for the new unit
 			newUnit.index = i;
@@ -71,7 +71,7 @@ GeneticAlgorithm.prototype = {
 	},
 
 	calculateFitness : function(game) {
-		this.Population[game.index].fitness = game.score - game.score * (game.diedByStayingOnPlatform + game.diedByHittingWall) * 0.5;
+		this.Population[game.index].fitness = game.score;
 		this.Population[game.index].score = game.score;
 	},
 	

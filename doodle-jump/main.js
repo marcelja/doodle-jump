@@ -202,7 +202,7 @@ function spring(game) {
 function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index) {
   this.platforms = [],
   this.image = document.getElementById("sprite"),
-  this.player, this.platformCount = 10,
+  this.player, this.platformCount = 5,
   this.position = 0,
   this.gravity = 0.2,
   this.animloop,
@@ -434,7 +434,7 @@ Game.prototype.collides = function() {
   this.platforms.forEach(function(p, i) {
 
     if (self.player.vy > 0 && p.state === 0 && (self.player.x + 15 < p.x + p.width) && (self.player.x + self.player.width - 15 > p.x) && (self.player.y + self.player.height > p.y) && (self.player.y + self.player.height < p.y + p.height)) {
-
+      p.state = 1
       if (p.type == 3 && p.flag === 0) {
         p.flag = 1;
         self.jumpCount = 0;
@@ -515,8 +515,8 @@ Game.prototype.calculateInputParams = function() {
   for (var i = 0; i < platform_helper.length; i++) {
     if (platform_helper[i].y < this.player.y) {
       this.inputPlatforms[0] = platform_helper[i];
-      this.inputPlatforms[1] = platform_helper[i+1];
-      this.inputPlatforms[2] = platform_helper[i+2];
+      // this.inputPlatforms[1] = platform_helper[i+1];
+      // this.inputPlatforms[2] = platform_helper[i+2];
       break;
     }
   }
