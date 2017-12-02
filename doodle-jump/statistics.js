@@ -5,18 +5,18 @@ showStats = function () {
         iterations.push(i);
     }
 
-    var trace1 = {
+    var gameScore = {
       x: iterations,
       y: GA.batchGameScores,
       type: 'scatter',
       name: 'Average game score'
     };
-    var trace2 = {
+    var playerScore = {
       x: iterations, 
       y: GA.batchPlayerScores, 
       type: 'scatter',
       name: 'Average score top player'
     };
-    var data = [trace1, trace2];
+    var data = [playerScore, gameScore];
     Plotly.newPlot('statsCanvas', data);
 }

@@ -87,7 +87,7 @@ GeneticAlgorithm.prototype = {
         if (this.iteration % BATCH_SIZE == 0) {
             this.scorePlayers += this.selection()[0].score;
             this.scoreGames += this.Population.reduce(function (init, b) { return init + b.score}, 0);
-            this.batchGameScores.push(this.scoreGames / BATCH_SIZE);
+            this.batchGameScores.push(this.scoreGames / (BATCH_SIZE * this.Population.length));
             this.batchPlayerScores.push(this.scorePlayers / BATCH_SIZE);
             showStats();
             this.scoreGames = 0;
