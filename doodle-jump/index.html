@@ -7,23 +7,27 @@
   </head>
   <body>
     <div class="container">
-
-      <div id="stats"></div>
-
-      <div id="game">
-      </div>
-
       <div id="mainMenu">
         <a class="button" href="javascript:startAllGames()">Start all games</a>
       </div>
 
+      <div id="stats"></div>
+
+      <div id="statsCanvas"></div>
+    </div>
+    <div class="container" id="gameContainer">
+      <div id="game">
+      </div>
+
+
       <!-- Preloading image ;) -->
       <img id="sprite" src="http://i.imgur.com/2WEhF.png"/>
-
     </div>
     <script src = "../synaptic.min.js"></script>
     <script src="../genetic.js"></script>
     <script src="../rng.js"></script>
+    <script src="../plotly-latest.min.js"></script>
+    <script src="statistics.js"></script>
     <script src="main.js"></script>
   </body>
 </html>

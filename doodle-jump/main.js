@@ -637,9 +637,9 @@ function restartAllGames() {
 function updateStats () {
   document.getElementById("generation").innerHTML = "Generation: " + GA.iteration;
   document.getElementById("best_generation").innerHTML = "The best unit was born in population " + GA.best_population;
-  document.getElementById("best_score").innerHTML += " " + GA.best_score;
+  document.getElementById("best_score").innerHTML = "Best score: " + GA.best_score;
+  document.getElementById("best_fitness").innerHTML = "Best fitness: " + GA.best_fitness;
   document.getElementById("best_score_gen").innerHTML += " " + GA.selection()[0].score;
-  document.getElementById("best_fitness").innerHTML += " " + GA.best_fitness;
 }
 
 function main() {
@@ -660,8 +660,8 @@ function main() {
   var statsHtml = `<p id="generation">Generation: 1</p>
                    <p id="best_generation">The best unit was born in generation 1</p>
                    <p id="best_score">Best score:</p>
-                   <p id="best_score_gen">Best score per generation:</p>
-                   <p id="best_fitness">Best fitness:</p>`;
+                   <p id="best_fitness">Best fitness:</p>
+                   <p id="best_score_gen">Best score per generation:</p>`;
   stats.innerHTML = statsHtml;
 }
 
@@ -674,3 +674,4 @@ var RNGSEED = Math.random();
 var GA = new GeneticAlgorithm(NUMBER_OF_GAMES,TOP_UNIT_NUMBER);
 GA.reset();
 GA.createPopulation();
+showStats();

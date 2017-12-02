@@ -2,26 +2,37 @@
 /* Genetic Algorithm implementation
 /***********************************************************************************/
 
+BATCH_SIZE = 10;
+
 var GeneticAlgorithm = function(max_units, top_units){
-    this.best_players = []
 	this.max_units = max_units; // max number of units in population
 	this.top_units = top_units; // number of top units (winners) used for evolving population
 	
 	if (this.max_units < this.top_units) this.top_units = this.max_units;
 	
 	this.Population = []; // array of all units in current population
+    this.scoreGames = 0;
+    this.scorePlayers = 0;
+    this.batchGameScores = [0];
+    this.batchPlayerScores = [0];
+
 }
 
 GeneticAlgorithm.prototype = {
-	// resets genetic algorithm parameters
-	reset : function(){
-		this.iteration = 1;	// current iteration number (it is equal to the current population number)
-		this.mutateRate = 1; // initial mutation rate
-		
-		this.best_population = 0; // the population number of the best unit
-		this.best_fitness = 0;  // the fitness of the best unit
-		this.best_score = 0;	// the score of the best unit ever
-		this.alive = 0;
+    // resets genetic algorithm parameters
+    reset : function(){
+        this.iteration = 1; // current iteration number (it is equal to the current population number)
+        this.mutateRate = 1; // initial mutation rate
+
+        this.best_population = 0; // the population number of the best unit
+        this.best_fitness = 0;  // the fitness of the best unit
+        this.best_score = 0;    // the score of the best unit ever
+        this.alive = 0;
+        this.best_players = [];
+        this.scoreGames = 0;
+        this.scorePlayers = 0;
+        this.batchGameScores = [0];
+        this.batchPlayerScores = [0];
 	},
 	
 	// creates a new population
@@ -64,12 +75,28 @@ GeneticAlgorithm.prototype = {
 	gameDied : function(game){
 		this.alive--;
 		if (this.alive == 0) {
-			this.evolvePopulation();
+            this.calculateStatsPerBatch();
+            this.evolvePopulation();
 			this.iteration++;
             this.alive = this.max_units;
             restartAllGames();
 		}
 	},
+
+    calculateStatsPerBatch : function() {
+        if (this.iteration % BATCH_SIZE == 0) {
+            this.scorePlayers += this.selection()[0].score;
+            this.scoreGames += this.Population.reduce(function (init, b) { return init + b.score}, 0);
+            this.batchGameScores.push(this.scoreGames / BATCH_SIZE);
+            this.batchPlayerScores.push(this.scorePlayers / BATCH_SIZE);
+            showStats();
+            this.scoreGames = 0;
+            this.scorePlayers = 0;
+        } else {
+            this.scorePlayers += this.selection()[0].score;
+            this.scoreGames += this.Population.reduce(function (init, b) { return init + b.score}, 0);
+        }
+    },
 
 	calculateFitness : function(game) {
 		this.Population[game.index].fitness = game.score;

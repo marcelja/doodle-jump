@@ -21,9 +21,15 @@ canvas {
 }
 
 #stats {
-  padding-left: 50px;
+  padding-left: 80px;
   padding-top: 20px;
   padding-bottom: 20px;
+  width: 50%;
+  float: left;
+}
+
+#gameContainer {
+  float: left;
 }
 
 #scoreBoard {
@@ -81,8 +87,8 @@ h3 a {color: #5a5816}
   line-height: 31px;
   text-decoration: none;
   position: fixed;
-  left: 50%;
-  top: 5%;
+  left: 25%;
+  top: 3%;
   z-index: -1;
 }
 
@@ -101,3 +107,11 @@ h3 a {color: #5a5816}
 
 .info .key.left {background-position: -92px -621px;}
 .info .key.right {background-position: -92px -641px;}
+
+#statsCanvas{
+  width: 50%;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  float: right;
+}
