@@ -86,7 +86,7 @@ h3 a {color: #5a5816}
   font-size: 12px;
   line-height: 31px;
   text-decoration: none;
-  position: fixed;
+  position: absolute;
   left: 25%;
   top: 3%;
   z-index: -1;

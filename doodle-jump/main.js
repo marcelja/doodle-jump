@@ -331,9 +331,11 @@ Game.prototype.playerCalc = function() {
   if (this.player.x > width) {
     this.diedByHittingWall = 1;
     this.gameOver();
+    // this.player.x = 0;
   } else if (this.player.x < 0 - this.player.width) {
     this.diedByHittingWall = 1;
     this.gameOver();
+    // this.player.x = width;
   } 
 
   //Movement of player affected by gravity
@@ -495,7 +497,7 @@ Game.prototype.updateInputParams = function() {
   this.input_params[1] = this.player.vx;
 
   for (var i = 0; i < this.inputPlatforms.length; i++) {
-    this.input_params[2+i*2] = this.player.x - this.inputPlatforms[i].x;
+    this.input_params[2+i*2] = this.player.x - this.inputPlatforms[i].x + this.player.width / 2;
     this.input_params[3+i*2] = this.player.y - this.inputPlatforms[i].y;
   }
 

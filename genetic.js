@@ -28,7 +28,6 @@ GeneticAlgorithm.prototype = {
         this.best_fitness = 0;  // the fitness of the best unit
         this.best_score = 0;    // the score of the best unit ever
         this.alive = 0;
-        this.best_players = [];
         this.scoreGames = 0;
         this.scorePlayers = 0;
         this.batchGameScores = [0];
@@ -169,7 +168,6 @@ GeneticAlgorithm.prototype = {
 	selection : function(){
 		// sort the units of the current population	in descending order by their fitness
 
-        this.Population.concat(this.best_players);
 		var sortedPopulation = this.Population.sort(
 			function(unitA, unitB){
 				return unitB.fitness - unitA.fitness;
@@ -180,7 +178,6 @@ GeneticAlgorithm.prototype = {
 		for (var i=0; i<this.top_units; i++) this.Population[i].isWinner = true;
 		
 		// return an array of the top units from the current population
-        this.best_players = sortedPopulation.slice(0, this.top_units);
 		return sortedPopulation.slice(0, this.top_units);
 	},
 	
