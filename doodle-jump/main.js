@@ -194,7 +194,7 @@ function spring(game) {
       if (this.state === 0) this.cy = 445;
       else if (this.state == 1) this.cy = 501;
 
-      game.ctx.drawImage(game.image, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height);
+      //game.ctx.drawImage(game.image, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height);
     } catch (e) {}
   };
 };
