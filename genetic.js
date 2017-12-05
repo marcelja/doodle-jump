@@ -71,7 +71,7 @@ GeneticAlgorithm.prototype = {
 	},
 
 	calculateFitness : function(game) {
-		this.Population[game.index].fitness = game.score - game.score * (game.diedByStayingOnPlatform + game.diedByHittingWall) * 0.5;
+		this.Population[game.index].fitness = game.score - game.score * (game.diedByStayingOnPlatform + game.diedByHittingWall) * 0.5 - (1 - game.diedByStayingOnPlatform) * (1 - game.diedByHittingWall) * game.xDifferenceToTargetPlatform;
 		this.Population[game.index].score = game.score;
 	},
 	

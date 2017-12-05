@@ -232,6 +232,7 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index
   this.iterationsSinceLastScoreIncrease = 0;
   this.diedByStayingOnPlatform = 0;
   this.diedByHittingWall = 0;
+  this.xDifferenceToTargetPlatform = 0;
 }
 
 Game.prototype.init = function() {
@@ -325,7 +326,10 @@ Game.prototype.playerCalc = function() {
   if ((this.player.y + this.player.height) > this.base.y && this.base.y < height) this.player.jump();
 
   //Gameover if it hits the bottom 
-  if (this.base.y > height && (this.player.y + this.player.height) > height && this.player.isDead != "lol") this.player.isDead = true;
+  if (this.base.y > height && (this.player.y + this.player.height) > height && this.player.isDead != "lol") {
+    this.player.isDead = true;
+
+  } 
 
   //Make the player move through walls
   if (this.player.x > width) {
@@ -450,6 +454,11 @@ Game.prototype.collides = function() {
     }
   });
 
+  //assume that we want to land on input platform 0
+  if (this.inputPlatforms[0].y == this.player.y) {
+    this.xDifferenceToTargetPlatform = Math.abs(this.player.x - this.inputPlatforms[0].x);
+  }
+
   //Springs
   var s = this.Spring;
   if (this.player.vy > 0 && (s.state === 0) && (this.player.x + 15 < s.x + s.width) && (this.player.x + this.player.width - 15 > s.x) && (this.player.y + this.player.height > s.y) && (this.player.y + this.player.height < s.y + s.height)) {
@@ -560,7 +569,6 @@ Game.prototype.animloop = function() {
 };
 
 Game.prototype.reset = function() {
-  this.hideGoMenu();
   this.showScore();
   this.player.isDead = false;
   
@@ -583,13 +591,6 @@ Game.prototype.reset = function() {
 Game.prototype.hideMenu = function() {
   var menu = document.getElementById("mainMenu");
   menu.style.zIndex = -1;
-}
-
-//Hides the game over menu
-Game.prototype.hideGoMenu = function() {
-  //var menu = document.getElementById("gameOverMenu");
-  //menu.style.zIndex = -1;
-  //menu.style.visibility = "hidden";
 }
 
 //Show ScoreBoard
