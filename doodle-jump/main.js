@@ -233,6 +233,7 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index
   this.diedByStayingOnPlatform = 0;
   this.diedByHittingWall = 0;
   this.xDifferenceToTargetPlatform = 0;
+  this.loops = 0;
 }
 
 Game.prototype.init = function() {
@@ -535,6 +536,7 @@ Game.prototype.calculateInputParams = function() {
 
 //Function to update everything
 Game.prototype.update = function() {
+  this.loops = this.loops + 1;
   this.paintCanvas();
   this.platformCalc();
  
