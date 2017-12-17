@@ -43,6 +43,8 @@ Game.prototype.init = function() {
 
   this.animloop();
 
+  this.hideMenu();
+
   this.showScore();
 }
 
@@ -56,7 +58,7 @@ Game.prototype.update = function() {
   this.loops = this.loops + 1;
   this.paintCanvas();
   this.platformCalc();
- 
+
   this.updateInputParams();
   this.GA.activateBrain(this);
   this.base.last_y = this.base.y;
@@ -92,7 +94,7 @@ Game.prototype.animloop = function() {
 Game.prototype.reset = function() {
   this.showScore();
   this.player.isDead = false;
-  
+
   this.flag = 0;
   this.position = 0;
   this.score = 0;
@@ -182,15 +184,21 @@ Game.prototype.gameOver = function() {
   if(this.player.y > height/2 && this.flag === 0) {
     this.player.y -= 8;
     this.player.vy = 0;
-  } 
+  }
   else if(this.player.y < height / 2) this.flag = 1;
   else if(this.player.y + this.player.height > height) {
     this.player.isDead = "lol";
   }
-  
+
   if (!this.died_message_sent) {
     this.GA.gameDied(this);
     window.cancelAnimationFrame(this.requestAnimId);
     this.died_message_sent = true;
   }
+}
+
+//Hides the menu
+Game.prototype.hideMenu = function() {
+  var menu = document.getElementById("mainMenu");
+  menu.style.zIndex = -1;
 }
