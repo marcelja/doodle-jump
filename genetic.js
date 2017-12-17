@@ -84,7 +84,7 @@ GeneticAlgorithm.prototype = {
 
     calculateStatsPerBatch : function() {
         if (this.iteration % BATCH_SIZE == 0) {
-            this.scorePlayers += this.selection()[0].score;
+            this.scorePlayers += Math.max.apply(null, this.Population.map(function(o){return o.score;}));
             this.scoreGames += this.Population.reduce(function (init, b) { return init + b.score}, 0);
             this.batchGameScores.push(this.scoreGames / (BATCH_SIZE * this.Population.length));
             this.batchPlayerScores.push(this.scorePlayers / BATCH_SIZE);
@@ -92,7 +92,7 @@ GeneticAlgorithm.prototype = {
             this.scoreGames = 0;
             this.scorePlayers = 0;
         } else {
-            this.scorePlayers += this.selection()[0].score;
+            this.scorePlayers += Math.max.apply(null, this.Population.map(function(o){return o.score;}));
             this.scoreGames += this.Population.reduce(function (init, b) { return init + b.score}, 0);
         }
     },

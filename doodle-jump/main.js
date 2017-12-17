@@ -321,7 +321,6 @@ Game.prototype.playerCalc = function() {
   else if(this.player.vx < -8)
     this.player.vx = -8;
 
-  //console.log(player.vx);
   
   //Jump the player when it hits the base
   if ((this.player.y + this.player.height) > this.base.y && this.base.y < height) this.player.jump();
@@ -333,15 +332,8 @@ Game.prototype.playerCalc = function() {
   } 
 
   //Make the player move through walls
-  if (this.player.x > width) {
-    this.diedByHittingWall = 1;
-    this.gameOver();
-    // this.player.x = 0;
-  } else if (this.player.x < 0 - this.player.width) {
-    this.diedByHittingWall = 1;
-    this.gameOver();
-    // this.player.x = width;
-  } 
+  if (this.player.x > width) this.player.x = 0 - this.player.width;
+    else if (this.player.x < 0 - this.player.width) this.player.x = width;
 
   //Movement of player affected by gravity
   if (this.player.y >= (height / 2) - (this.player.height / 2)) {
@@ -644,7 +636,8 @@ function updateStats () {
   document.getElementById("best_generation").innerHTML = "The best unit was born in population " + GA.best_population;
   document.getElementById("best_score").innerHTML = "Best score: " + GA.best_score;
   document.getElementById("best_fitness").innerHTML = "Best fitness: " + GA.best_fitness;
-  document.getElementById("best_score_gen").innerHTML += " " + GA.selection()[0].score;
+  // Population is already sorted. Hence we can use first element in population
+  document.getElementById("best_score_gen").innerHTML += " " + GA.Population[0].score;
 }
 
 function main() {
