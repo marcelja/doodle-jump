@@ -10,31 +10,6 @@ var width = 422,
   height = 552;
 
 
-
-
-Game.prototype.gameOver = function() {
-  this.platforms.forEach(function(p, i) {
-    p.y -= 12;
-  });
-
-  this.GA.calculateFitness(this);
-
-  if(this.player.y > height/2 && this.flag === 0) {
-    this.player.y -= 8;
-    this.player.vy = 0;
-  } 
-  else if(this.player.y < height / 2) this.flag = 1;
-  else if(this.player.y + this.player.height > height) {
-    this.player.isDead = "lol";
-  }
-  
-  if (!this.died_message_sent) {
-    this.GA.gameDied(this);
-    window.cancelAnimationFrame(this.requestAnimId);
-    this.died_message_sent = true;
-  }
-}
-
 Game.prototype.updateInputParams = function() {
   var inputParamsText =  document.getElementById(this.input_params_p);
   
