@@ -16,8 +16,21 @@ Game.prototype.updateInputParams = function() {
   this.input_params[0] = this.player.vy;
   this.input_params[1] = this.player.vx;
 
+  var player_mid_x = this.player.x + (this.player.width / 2);
+
   for (var i = 0; i < this.inputPlatforms.length; i++) {
-    this.input_params[2+i*2] = this.player.x - this.inputPlatforms[i].x + this.player.width / 2;
+    var platform_mid_x = this.inputPlatforms[i].x + (this.inputPlatforms[i].width / 2);
+    this.input_params[2+i*2] = player_mid_x - platform_mid_x;
+
+    // remove if walls disabled
+    if (Math.abs(player_mid_x - platform_mid_x) > (width + this.player.width) / 2) {
+      if (player_mid_x - platform_mid_x < 0) {
+        this.input_params[2+i*2] = width + this.player.width + player_mid_x - platform_mid_x;
+      } else {
+        this.input_params[2+i*2] = - width - this.player.width + player_mid_x - platform_mid_x;
+      }
+    }
+    // end
     this.input_params[3+i*2] = this.player.y - this.inputPlatforms[i].y;
   }
 
@@ -43,8 +56,6 @@ Game.prototype.calculateInputParams = function() {
     }
   }
 }
-
-
 
 function startOneGame(ctx, sb, sp, ip, ga, i) {
   var gameObj = new Game(ctx, sb, sp, ip, ga, i);
