@@ -1,7 +1,7 @@
 function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index) {
   this.platforms = [],
   this.image = document.getElementById("sprite"),
-  this.player, this.platformCount = 5,
+  this.player, this.platformCount = 10,
   this.position = 0,
   this.gravity = 0.2,
   this.animloop,

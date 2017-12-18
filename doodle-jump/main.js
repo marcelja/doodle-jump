@@ -50,7 +50,7 @@ Game.prototype.calculateInputParams = function() {
   for (var i = 0; i < platform_helper.length; i++) {
     if (platform_helper[i].y < this.player.y) {
       this.inputPlatforms[0] = platform_helper[i];
-      // this.inputPlatforms[1] = platform_helper[i+1];
+      this.inputPlatforms[1] = platform_helper[i+1];
       // this.inputPlatforms[2] = platform_helper[i+2];
       break;
     }
@@ -117,7 +117,7 @@ slider.oninput = function() {
     document.getElementById('speedUpValue').innerHTML = SPEED_UP_FACTOR;
 }
 
-var NUMBER_OF_GAMES = 10;
+var NUMBER_OF_GAMES = 16;
 var TOP_UNIT_NUMBER = 4;
 var SPEED_UP_FACTOR = 1;
 

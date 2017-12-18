@@ -107,10 +107,10 @@ Game.prototype.playerCalc = function() {
   }
 
   // Speed limits!
-  if(this.player.vx > 8)
-    this.player.vx = 8;
-  else if(this.player.vx < -8)
-    this.player.vx = -8;
+  if(this.player.vx > 2)
+    this.player.vx = 2;
+  else if(this.player.vx < -2)
+    this.player.vx = -2;
 
   
   //Jump the player when it hits the base
