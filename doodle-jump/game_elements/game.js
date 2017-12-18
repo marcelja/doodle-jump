@@ -138,7 +138,6 @@ Game.prototype.collides = function() {
   this.platforms.forEach(function(p, i) {
 
     if (self.player.vy > 0 && p.state === 0 && (self.player.x + 15 < p.x + p.width) && (self.player.x + self.player.width - 15 > p.x) && (self.player.y + self.player.height > p.y) && (self.player.y + self.player.height < p.y + p.height)) {
-      p.state = 1
       if (p.type == 3 && p.flag === 0) {
         p.flag = 1;
         self.jumpCount = 0;
