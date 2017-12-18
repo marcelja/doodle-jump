@@ -70,7 +70,7 @@ function restartAllGames() {
 function updateStats () {
   document.getElementById("generation").innerHTML = "Generation: " + GA.iteration;
   document.getElementById("best_generation").innerHTML = "The best unit was born in population " + GA.best_population;
-  document.getElementById("best_score").innerHTML = "Best score: " + GA.best_score;
+  document.getElementById("best_score").innerHTML = "Best score: " + GA.best_score.toFixed(2);
   document.getElementById("best_fitness").innerHTML = "Best fitness: " + GA.best_fitness;
   // Population is already sorted. Hence we can use first element in population
   document.getElementById("best_score_gen").innerHTML += " " + GA.Population[0].score;
