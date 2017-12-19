@@ -163,7 +163,7 @@ Game.prototype.collides = function() {
   if (this.player.vy > 0 && (s.state === 0) && (this.player.x + 15 < s.x + s.width) && (this.player.x + this.player.width - 15 > s.x) && (this.player.y + this.player.height > s.y) && (this.player.y + this.player.height < s.y + s.height)) {
     //disabled for now
     s.state = 1;
-    //player.jumpHigh();
+    self.player.jumpHigh();
   }
 
 }

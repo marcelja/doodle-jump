@@ -13,6 +13,9 @@ var width = 422,
 Game.prototype.updateInputParams = function() {
   var inputParamsText =  document.getElementById(this.input_params_p);
   
+  // keep updating input params after using spring
+  if (this.player.vy < -8) this.calculateInputParams();
+
   this.input_params[0] = this.player.vy;
   this.input_params[1] = this.player.vx;
 
