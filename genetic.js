@@ -3,7 +3,7 @@
 /***********************************************************************************/
 
 BATCH_SIZE = 10;
-MAX_TOP_UNITS = 4;
+MAX_TOP_UNITS = 6;
 MIN_TOP_UNITS = 2;
 
 var GeneticAlgorithm = function(max_units, top_units){
@@ -196,7 +196,7 @@ GeneticAlgorithm.prototype = {
 
 		this.top_units = 0;
 
-		for (var i = MAX_TOP_UNITS - 1; i >= 0; i--) {
+		for (var i = 0; i <= MAX_TOP_UNITS - 1; i++) {
 			if (sortedPopulation[i].fitness > this.lastFitnessOfMaxTop) {
 				this.top_units++;
 			} else {
