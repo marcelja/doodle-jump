@@ -90,6 +90,21 @@ function updateStats () {
   document.getElementById("best_score_gen").innerHTML += " " + GA.Population[0].score;
 }
 
+function stop() {
+    if (SPEED_UP_FACTOR != 0) {
+        old_speed = SPEED_UP_FACTOR;
+        SPEED_UP_FACTOR = 0;
+        stopButton = document.getElementById("stopButton");
+        stopButton.text = "Start"
+        stopButton.style.background = "url('http://i.imgur.com/2WEhF.png') 0 0 no-repeat";
+    } else {
+        stopButton = document.getElementById("stopButton");
+        stopButton.text = "Stop"
+        stopButton.style.background = "url('http://i.imgur.com/2WEhF.png') 0 -31px no-repeat";
+        SPEED_UP_FACTOR = old_speed;
+    }
+}
+
 function main() {
   var game = document.getElementById('game');
   var html = "";

@@ -8,7 +8,7 @@
   <body>
     <div class="container" id="statsContainer">
       <div id="mainMenu">
-        <a class="button" href="javascript:startAllGames()">Start all games</a>
+        <a class="button" id="startButton" href="javascript:startAllGames()">Start all games</a>
       </div>
 
       <div id="gamestats">
@@ -17,6 +17,7 @@
           <input type="range" min="0" max="9" value="0" class="slider" id="speedUp">
           <p>Game speed up factor: <span id="speedUpValue"></span></p>
         </div>
+        <a class="button" id=stopButton href="javascript:stop()">Stop</a>
       </div>
 
       <div id="statsCanvas"></div>
