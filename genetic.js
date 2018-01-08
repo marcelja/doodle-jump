@@ -3,6 +3,8 @@
 /***********************************************************************************/
 
 BATCH_SIZE = 10;
+MAX_TOP_UNITS = 4;
+MIN_TOP_UNITS = 2;
 
 var GeneticAlgorithm = function(max_units, top_units){
 	this.max_units = max_units; // max number of units in population
@@ -15,8 +17,8 @@ var GeneticAlgorithm = function(max_units, top_units){
     this.scorePlayers = 0;
     this.batchGameScores = [0];
     this.batchPlayerScores = [0];
-    this.last_best_fitness = 0;
-    this.last_average_fitness = 0;
+    this.lastBestFitness = 0;
+    this.lastFitnessOfMaxTop = 0;
 
 }
 
@@ -34,8 +36,8 @@ GeneticAlgorithm.prototype = {
         this.scorePlayers = 0;
         this.batchGameScores = [0];
         this.batchPlayerScores = [0];
-	    this.last_best_fitness = 0;
-	    this.last_average_fitness = 0;
+	    this.lastBestFitness = 0;
+	    this.lastFitnessOfMaxTop = 0;
 	},
 	
 	// creates a new population
@@ -106,70 +108,6 @@ GeneticAlgorithm.prototype = {
 		this.Population[game.index].fitness = Math.max(0, 0.8 * game.score * game.score - 0.2 * 0.1 * game.loops);
 		this.Population[game.index].score = game.score;
 	},
-	
-	// evolves the population by performing selection, crossover and mutations on the units
-	// evolvePopulation : function(){
-	// 	// select the top units of the current population to get an array of winners
-	// 	// (they will be copied to the next population)
- //        var Winners = this.selection();
-
-	// 	if (this.mutateRate == 1 && Winners[0].fitness < 0){ 
-	// 		// If the best unit from the initial population has a negative fitness 
-	// 		// then it means there is no any bird which reached the first barrier!
-	// 		// Playing as the God, we can destroy this bad population and try with another one.
-	// 		this.createPopulation();
-	// 	} else {
-	// 		this.mutateRate = 0.2; // else set the mutatation rate to the real value
-	// 	}
-			
-	// 	// fill the rest of the next population with new units using crossover and mutation
-	// 	for (var i=this.top_units; i<this.max_units; i++){
-	// 		var parentA, parentB, offspring;
-				
-	// 		if (i == this.top_units){
-	// 			// offspring is made by a crossover of two best winners
-	// 			parentA = Winners[0].toJSON();
-	// 			parentB = Winners[1].toJSON();
-	// 			offspring = this.crossOver(parentA, parentB);
-
-	// 		} else if (i < this.max_units-2){
-	// 			// offspring is made by a crossover of two random winners
-	// 			parentA = this.getRandomUnit(Winners).toJSON();
-	// 			parentB = this.getRandomUnit(Winners).toJSON();
-	// 			offspring = this.crossOver(parentA, parentB);
-				
-	// 		} else {
-	// 			// offspring is a random winner
-	// 			offspring = this.getRandomUnit(Winners).toJSON();
-	// 		}
-
-	// 		// mutate the offspring
-	// 		offspring = this.mutation(offspring);
-			
-	// 		// create a new unit using the neural network from the offspring
-	// 		var newUnit = synaptic.Network.fromJSON(offspring);
-	// 		newUnit.index = this.Population[i].index;
-	// 		newUnit.fitness = 0;
-	// 		newUnit.score = 0;
-	// 		newUnit.isWinner = false;
-			
-	// 		// update population by changing the old unit with the new one
-	// 		this.Population[i] = newUnit;
-	// 	}
-		
-	// 	// if the top winner has the best fitness in the history, store its achievement!
-	// 	if (Winners[0].fitness > this.best_fitness){
-	// 		this.best_population = this.iteration;
-	// 		this.best_fitness = Winners[0].fitness;
-	// 		this.best_score = Winners[0].score;
-	// 	}
-		
-	// 	// sort the units of the new population	in ascending order by their index
-	// 	//this.Population.sort(function(unitA, unitB){
-	// 	//});
-	// },
-
-
 
 	// evolves the population by performing selection, crossover and mutations on the units
 	evolvePopulation : function(){
@@ -187,13 +125,7 @@ GeneticAlgorithm.prototype = {
 
 		// Magic goes here
 
-		console.log("Fitness old: " + this.last_best_fitness + ", now: " +  current_best_fitness);
-		console.log("divided value: " + this.last_best_fitness / current_best_fitness);
-
-
-		this.last_best_fitness = current_best_fitness;
-		this.last_average_fitness = current_average_fitness;
-
+		// console.log("Fitness old: " + this.lastBestFitness + ", now: " +  current_best_fitness);
 
         var Winners = this.selection();
 
@@ -203,7 +135,12 @@ GeneticAlgorithm.prototype = {
 			// Playing as the God, we can destroy this bad population and try with another one.
 			this.createPopulation();
 		} else {
-			this.mutateRate = 0.2; // else set the mutatation rate to the real value
+			var mutatation_rate = this.lastBestFitness / current_best_fitness / 10;
+			mutatation_rate = Math.max(Math.min(0.5, mutatation_rate), 0.05);
+			console.log("Mutation rate: " + mutatation_rate);
+			this.lastBestFitness = current_best_fitness;
+			this.last_average_fitness = current_average_fitness;
+			this.mutateRate = mutatation_rate; // else set the mutatation rate to the real value
 		}
 			
 		// fill the rest of the next population with new units using crossover and mutation
@@ -257,10 +194,26 @@ GeneticAlgorithm.prototype = {
 	selection : function(){
 		// sort the units of the current population	in descending order by their fitness
 
+		this.top_units = 0;
+
+		for (var i = MAX_TOP_UNITS - 1; i >= 0; i--) {
+			if (sortedPopulation[i].fitness > this.lastFitnessOfMaxTop) {
+				this.top_units++;
+			} else {
+				break;
+			}
+		}
+
+
+		this.top_units = Math.max(MIN_TOP_UNITS, this.top_units);
+
+		this.lastFitnessOfMaxTop = sortedPopulation[MAX_TOP_UNITS - 1].fitness;
+
+		console.log(this.top_units);
 
 		
 		// mark the top units as the winners!
-		for (var i=0; i<this.top_units; i++) this.Population[i].isWinner = true;
+		for (var i=0; i<this.top_units; i++) sortedPopulation.isWinner = true;
 		
 		// return an array of the top units from the current population
 		return sortedPopulation.slice(0, this.top_units);
