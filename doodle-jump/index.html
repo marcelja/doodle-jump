@@ -18,10 +18,18 @@
           <p>Game speed up factor: <span id="speedUpValue"></span></p>
         </div>
         <a class="button" id=stopButton href="javascript:stop()">Stop</a>
+        <div id="togglecontainer">
+          Wait after all player died: 
+          <label class="switch">
+            <input type="checkbox" id="wait">
+            <span class="toggle round"></span>
+          </label>
+        </div>
       </div>
 
       <div id="statsCanvas"></div>
     </div>
+
     <div class="container" id="gameContainer">
       <div id="game"></div>
 

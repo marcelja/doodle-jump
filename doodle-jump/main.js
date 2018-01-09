@@ -77,8 +77,12 @@ function startAllGames() {
 }
 
 function restartAllGames() {
-  updateStats();
-  startAllGames();
+  if (document.getElementById("wait").checked) {
+    setTimeout(restartAllGames, 1000);
+  } else {
+    updateStats();
+    startAllGames();
+  }
 }
 
 function updateStats () {
