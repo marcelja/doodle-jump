@@ -9,6 +9,7 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index
   this.broken = 0,
   this.dir, this.score = 0, this.firstRun = true;
   this.jumpCount = 0;
+  this.replay = 0;
 
   this.ctx = ctx;
   this.scoreBoard = scoreBoard;
@@ -68,7 +69,6 @@ Game.prototype.update = function() {
 
   this.playerCalc();
   this.player.draw();
-
   this.base.draw();
 
   this.updateScore();
@@ -80,7 +80,28 @@ Game.prototype.update = function() {
   }
 }
 
+Game.prototype.startReplay = function() {
+  this.replay = 1;
+  this.animloop();
+}
+
+Game.prototype.updateReplay = function() {
+  if (this.replay == this.player.lastFrames.length) {
+    this.replay = 0;
+  } else {
+    this.paintCanvas();
+    this.platformCalc();
+    this.player.drawFrame(this.replay);
+    this.replay += 1;
+  }
+}
+
 Game.prototype.animloop = function() {
+  if (this.replay > 0) {
+    this.updateReplay();
+    this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
+  }
+
   if (!this.died_message_sent) {
     for (var i = 0; i < SPEED_UP_FACTOR; i++) {
       if (!this.died_message_sent) {

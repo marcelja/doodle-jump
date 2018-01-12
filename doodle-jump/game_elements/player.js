@@ -31,6 +31,11 @@ function Player(game) {
     this.lastFrames.push([this.cx, this.cy, this.x, this.y]);
   };
 
+  this.drawFrame = function(index) {
+    game.ctx.drawImage(game.image, this.lastFrames[index][0], this.lastFrames[index][1], this.cwidth, this.cheight, this.lastFrames[index][2], this.lastFrames[index][3], this.width, this.height);
+
+  }
+
   //Function to draw it
   this.draw = function() {
 

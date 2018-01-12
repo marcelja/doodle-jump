@@ -8,7 +8,7 @@ window.requestAnimFrame = (function() {
 
 var width = 422,
   height = 552;
-
+var allGames = [];
 
 Game.prototype.updateInputParams = function() {
   var inputParamsText =  document.getElementById(this.input_params_p);
@@ -63,6 +63,7 @@ Game.prototype.calculateInputParams = function() {
 function startOneGame(ctx, sb, sp, ip, ga, i) {
   var gameObj = new Game(ctx, sb, sp, ip, ga, i);
   gameObj.init();
+  allGames.push(gameObj);
 }
 
 function startAllGames() {
