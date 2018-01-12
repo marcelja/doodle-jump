@@ -22,6 +22,15 @@ function Player(game) {
   this.last_y = height;
   this.y = height;
 
+  this.lastFrames = [];
+
+  this.saveFrame = function() {
+    if (this.lastFrames.length == 50) {
+      this.lastFrames.shift();
+    } 
+    this.lastFrames.push([this.cx, this.cy, this.x, this.y]);
+  };
+
   //Function to draw it
   this.draw = function() {
 
@@ -32,6 +41,7 @@ function Player(game) {
       else if (this.dir == "left_land") this.cy = 371;
 
       game.ctx.drawImage(game.image, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height);
+      this.saveFrame();
     } catch (e) {console.log(e);}
   };
 
