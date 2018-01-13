@@ -22,18 +22,8 @@ function Player(game) {
   this.last_y = height;
   this.y = height;
 
-  this.lastFrames = [];
-
-  this.saveFrame = function() {
-    if (this.lastFrames.length == 50) {
-      this.lastFrames.shift();
-    } 
-    this.lastFrames.push([this.cx, this.cy, this.x, this.y]);
-  };
-
-  this.drawFrame = function(index) {
-    game.ctx.drawImage(game.image, this.lastFrames[index][0], this.lastFrames[index][1], this.cwidth, this.cheight, this.lastFrames[index][2], this.lastFrames[index][3], this.width, this.height);
-
+  this.getFrame = function() {
+    return [true, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height];
   }
 
   //Function to draw it
@@ -46,7 +36,6 @@ function Player(game) {
       else if (this.dir == "left_land") this.cy = 371;
 
       game.ctx.drawImage(game.image, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height);
-      this.saveFrame();
     } catch (e) {console.log(e);}
   };
 

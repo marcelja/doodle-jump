@@ -16,6 +16,10 @@ function Platform(game) {
   this.cwidth = 105;
   this.cheight = 31;
 
+  this.getFrame = function() {
+    return [this.appearance, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height];
+  }
+
   //Function to draw it
   this.draw = function() {
     try {
@@ -82,6 +86,10 @@ function Platform_broken_substitute(game) {
   this.cheight = 60;
 
   this.appearance = false;
+
+  this.getFrame = function() {
+    return [this.appearance, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height];
+  }
 
   this.draw = function() {
     try {

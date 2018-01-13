@@ -10,6 +10,7 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index
   this.dir, this.score = 0, this.firstRun = true;
   this.jumpCount = 0;
   this.replay = 0;
+  this.lastFrames = [];
   this.simulate_immediately = simulate_immediately;
 
   this.ctx = ctx;
@@ -77,6 +78,7 @@ Game.prototype.update = function() {
     this.base.draw();
   }
 
+  this.saveFrame();
   this.updateScore();
   this.iterationsSinceLastScoreIncrease++;
   if (this.iterationsSinceLastScoreIncrease == 200) {
@@ -86,18 +88,32 @@ Game.prototype.update = function() {
   }
 }
 
+Game.prototype.saveFrame = function() {
+  if (this.lastFrames.length == 200) {
+    this.lastFrames.shift();
+  }
+  var elements = []
+  for (var i = 0; i < this.platforms.length; i++) {
+    elements.push(this.platforms[i].getFrame());
+  }
+  elements.push(this.player.getFrame());
+  this.lastFrames.push(elements);
+}
+
+
 Game.prototype.startReplay = function() {
   this.replay = 1;
   this.animloop();
 }
 
 Game.prototype.updateReplay = function() {
-  if (this.replay == this.player.lastFrames.length) {
+  if (this.replay == this.lastFrames.length) {
     this.replay = 0;
   } else {
     this.paintCanvas();
-    this.platformCalc();
-    this.player.drawFrame(this.replay);
+    for (var i = 0; i < this.lastFrames[this.replay].length; i++) {    
+      this.ctx.drawImage(this.image, this.lastFrames[this.replay][i][1], this.lastFrames[this.replay][i][2], this.lastFrames[this.replay][i][3], this.lastFrames[this.replay][i][4], this.lastFrames[this.replay][i][5], this.lastFrames[this.replay][i][6], this.lastFrames[this.replay][i][7], this.lastFrames[this.replay][i][8]);
+    }
     this.replay += 1;
   }
 }

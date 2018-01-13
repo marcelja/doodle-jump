@@ -36,6 +36,7 @@ function restartAllGames() {
     setTimeout(restartAllGames, 1000);
   } else {
     updateStats();
+    allGames = [];
     startAllGames();
   }
 }
