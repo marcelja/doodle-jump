@@ -41,15 +41,19 @@ function restartAllGames() {
   }
 }
 
+function replay(gameIndex) {
+  allGames[gameIndex].startReplay();
+}
+
 function main() {
   var game = document.getElementById('game');
   var html = "";
   for (var i = 0; i < NUMBER_OF_GAMES; i++) {
     html += `<div class="wrapper">
               <canvas id="canvas_${i}" style="margin-bottom:10px;margin-left:10px;border:1px solid #d3d3d3;"></canvas>
-              <div id="scoreBoard_${i}">
+              <div id="scoreBoard_${i}" style="margin:20px;">
                 <p>Score: </p><p id="score_${i}">0</p>
-                <p>Input parameters: </p><p id="input_params${i}"></p>
+                <button id="replay_${i}" onclick="replay(${i})" style="visibility:hidden">Replay</button>
               </div>
             </div>`;
   }

@@ -44,6 +44,7 @@ Game.prototype.init = function() {
   this.calculateInputParams();
   this.firstRun = false;
 
+  document.getElementById(`replay_${this.index}`).style.visibility = 'hidden';
   this.animloop();
 
   this.hideMenu();
@@ -243,6 +244,8 @@ Game.prototype.gameOver = function() {
     window.cancelAnimationFrame(this.requestAnimId);
     this.died_message_sent = true;
   }
+
+  document.getElementById(`replay_${this.index}`).style.visibility = 'visible';
 }
 
 //Hides the menu
