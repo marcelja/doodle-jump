@@ -224,6 +224,7 @@ Game.prototype.updateScore = function() {
 }
 
 Game.prototype.gameOver = function() {
+  document.getElementById(`replay_${this.index}`).style.visibility = 'visible';
   this.platforms.forEach(function(p, i) {
     p.y -= 12;
   });
@@ -245,7 +246,6 @@ Game.prototype.gameOver = function() {
     this.died_message_sent = true;
   }
 
-  document.getElementById(`replay_${this.index}`).style.visibility = 'visible';
 }
 
 //Hides the menu
