@@ -3,8 +3,10 @@
 /***********************************************************************************/
 
 BATCH_SIZE = 10;
-MAX_TOP_UNITS = 6;
-MIN_TOP_UNITS = 2;
+MAX_TOP_UNITS = 5;
+MIN_TOP_UNITS = 3;
+MAX_MUTATION_RATE = 0.24;
+MIN_MUTATION_RATE = 0.18;
 
 var GeneticAlgorithm = function(max_units, top_units){
 	this.max_units = max_units; // max number of units in population
@@ -156,8 +158,9 @@ GeneticAlgorithm.prototype = {
 			// Playing as the God, we can destroy this bad population and try with another one.
 			this.createPopulation();
 		} else {
-			var mutatation_rate = this.lastBestFitness / current_best_fitness / 10;
-			mutatation_rate = Math.max(Math.min(0.5, mutatation_rate), 0.05);
+			var mutatation_rate = this.lastBestFitness / (current_best_fitness + this.lastBestFitness);
+			mutatation_rate = Math.min(1, mutatation_rate);
+			mutatation_rate = mutatation_rate * (MAX_MUTATION_RATE - MIN_MUTATION_RATE) + MIN_MUTATION_RATE;
 			//console.log("Mutation rate: " + mutatation_rate);
 			this.lastBestFitness = current_best_fitness;
 			this.last_average_fitness = current_average_fitness;
