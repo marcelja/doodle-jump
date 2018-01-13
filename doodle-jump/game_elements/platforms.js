@@ -19,7 +19,9 @@ function Platform(game) {
   //Function to draw it
   this.draw = function() {
     try {
-
+      if (game.simulate_immediately) {
+        return;
+      }
       if (this.type == 1) this.cy = 0;
       else if (this.type == 2) this.cy = 61;
       else if (this.type == 3 && this.flag === 0) this.cy = 31;
@@ -83,7 +85,7 @@ function Platform_broken_substitute(game) {
 
   this.draw = function() {
     try {
-      if (this.appearance === true) game.ctx.drawImage(game.image, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height);
+      if (this.appearance === true && !game.simulate_immediately) game.ctx.drawImage(game.image, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height);
       else return;
     } catch (e) {}
   };
@@ -107,12 +109,16 @@ Game.prototype.platformCalc = function() {
 
       this.jumpCount++;
     }
-
-    p.draw();
+    if (!this.simulate_immediately) {
+      p.draw();
+    }
+    
   });
 
   if (subs.appearance === true) {
-    subs.draw();
+    if (!this.simulate_immediately) {
+      subs.draw();
+    }
     subs.y += 8;
   }
 

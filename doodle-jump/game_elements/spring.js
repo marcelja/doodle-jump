@@ -11,7 +11,6 @@ function Spring(game) {
   this.cy = 0;
   this.cwidth = 45;
   this.cheight = 53;
-
   this.state = 0;
 
   this.draw = function() {
@@ -35,8 +34,9 @@ Game.prototype.springCalc = function() {
     s.y = p.y - p.height - 10;
 
     if (s.y > height / 1.1) s.state = 0;
-
-    s.draw();
+    if (!this.simulate_immediately) {
+      s.draw();
+    }
   } else {
     s.x = 0 - s.width;
     s.y = 0 - s.height;

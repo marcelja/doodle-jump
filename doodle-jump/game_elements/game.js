@@ -1,4 +1,4 @@
-function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index) {
+function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index, simulate_immediately) {
   this.platforms = [],
   this.image = document.getElementById("sprite"),
   this.player, this.platformCount = 10,
@@ -10,6 +10,7 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index
   this.dir, this.score = 0, this.firstRun = true;
   this.jumpCount = 0;
   this.replay = 0;
+  this.simulate_immediately = simulate_immediately;
 
   this.ctx = ctx;
   this.scoreBoard = scoreBoard;
@@ -51,7 +52,9 @@ Game.prototype.init = function() {
 
 //Function for clearing canvas in each consecutive frame
 Game.prototype.paintCanvas = function() {
-  this.ctx.clearRect(0, 0, width, height);
+  if (!this.simulate_immediately) {
+    this.ctx.clearRect(0, 0, width, height);
+  }
 }
 
 //Function to update everything
@@ -68,8 +71,11 @@ Game.prototype.update = function() {
   this.springCalc();
 
   this.playerCalc();
-  this.player.draw();
-  this.base.draw();
+  if (!this.simulate_immediately) {
+    this.player.draw();
+
+    this.base.draw();
+  }
 
   this.updateScore();
   this.iterationsSinceLastScoreIncrease++;
@@ -108,7 +114,13 @@ Game.prototype.animloop = function() {
         this.update();
       }
     }
-    this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
+    if (this.simulate_immediately) {
+      while(!this.died_message_sent) {
+        this.update();
+      }
+    } else {
+      this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
+    }
   }
 };
 
