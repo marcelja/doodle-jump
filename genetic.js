@@ -6,8 +6,9 @@ BATCH_SIZE = 10;
 MAX_TOP_UNITS = 6;
 MIN_TOP_UNITS = 2;
 
-var GeneticAlgorithm = function(max_units, top_units){
+var GeneticAlgorithm = function(max_units, parallel_games, top_units){
 	this.max_units = max_units; // max number of units in population
+    this.parallel_games = parallel_games; // number of games the played at the same time
 	this.top_units = top_units; // number of top units (winners) used for evolving population
 	
 	if (this.max_units < this.top_units) this.top_units = this.max_units;
@@ -15,6 +16,8 @@ var GeneticAlgorithm = function(max_units, top_units){
 	this.Population = []; // array of all units in current population
     this.scoreGames = 0;
     this.scorePlayers = 0;
+    this.scoresPerGeneration = {};
+    this.fitnessPerGeneration = {};
     this.batchGameScores = [0];
     this.batchPlayerScores = [0];
     this.lastBestFitness = 0;
@@ -32,6 +35,8 @@ GeneticAlgorithm.prototype = {
         this.best_fitness = 0;  // the fitness of the best unit
         this.best_score = 0;    // the score of the best unit ever
         this.alive = 0;
+        this.fitnessPerGeneration = {};
+        this.scoresPerGeneration = {};
         this.scoreGames = 0;
         this.scorePlayers = 0;
         this.batchGameScores = [0];
@@ -59,7 +64,7 @@ GeneticAlgorithm.prototype = {
 			// add the new unit to the population 
 			this.Population.push(newUnit);
 		}
-		this.alive = this.max_units;
+		this.alive = this.max_units * this.parallel_games;
 	},
 	
 	// activates the neural network of an unit from the population 
@@ -69,7 +74,7 @@ GeneticAlgorithm.prototype = {
 		var inputs = game.input_params;
 		
 		// calculate outputs by activating synaptic neural network of this bird
-		var outputs = this.Population[game.index].activate(inputs);
+		var outputs = this.Population[game.playerIndex].activate(inputs);
 			
 		// perform flap if output is greater than 0.5
 		if (outputs[0] > outputs[1] && outputs[0] > outputs[2]) game.goLeft();
@@ -80,13 +85,30 @@ GeneticAlgorithm.prototype = {
 	gameDied : function(game){
 		this.alive--;
 		if (this.alive == 0) {
+            this.averageScores()
             this.calculateStatsPerBatch();
             this.evolvePopulation();
 			this.iteration++;
-            this.alive = this.max_units;
+            this.alive = this.max_units * this.parallel_games;
             restartAllGames();
 		}
 	},
+
+    averageScores: function() {
+        var bestScoreHelper = [];
+        var bestFitnessHelper = [];
+        // for (var i = this.Population.length - 1; i >= 0; i--) {
+        for (var i = 0; i < this.Population.length; i++) {
+            this.Population[i].score = this.scoresPerGeneration[i].reduce(function (init, b) { return init + b}, 0) / this.parallel_games;
+            this.Population[i].fitness = this.fitnessPerGeneration[i].reduce(function (init, b) { return init + b}, 0) / this.parallel_games;
+            bestScoreHelper.push(Math.max.apply(null, this.scoresPerGeneration[i]));
+            bestFitnessHelper.push(Math.max.apply(null, this.fitnessPerGeneration[i]));
+        }
+
+        var bestScore = Math.max.apply(null, bestScoreHelper);
+        var bestFitness = Math.max.apply(null, bestFitnessHelper);
+
+    },
 
     calculateStatsPerBatch : function() {
         if (this.iteration % BATCH_SIZE == 0) {
@@ -102,11 +124,19 @@ GeneticAlgorithm.prototype = {
             this.scoreGames += this.Population.reduce(function (init, b) { return init + b.score}, 0);
         }
     },
-
+ 
 	calculateFitness : function(game) {
 		// good players can get more than 0.4 score per loop, up to 0.48
-		this.Population[game.index].fitness = Math.max(0, 0.8 * game.score * game.score - 0.2 * 0.1 * game.loops);
-		this.Population[game.index].score = game.score;
+        var fitness = Math.max(0, 0.8 * game.score * game.score - 0.2 * 0.1 * game.loops);
+        if (this.fitnessPerGeneration[game.playerIndex]) {
+            this.fitnessPerGeneration[game.playerIndex].push(fitness)
+            this.scoresPerGeneration[game.playerIndex].push(game.score)
+        } else {
+            this.fitnessPerGeneration[game.playerIndex] = [fitness];
+            this.scoresPerGeneration[game.playerIndex] = [game.score];
+        }
+		// this.Population[game.index].fitness = Math.max(0, 0.8 * game.score * game.score - 0.2 * 0.1 * game.loops);
+		// this.Population[game.index].score = game.score;
 	},
 
 	// evolves the population by performing selection, crossover and mutations on the units

@@ -1,4 +1,4 @@
-function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index) {
+function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, playerIndex, gameIndex) {
   this.platforms = [],
   this.image = document.getElementById("sprite"),
   this.player, this.platformCount = 10,
@@ -15,10 +15,11 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, index
   this.score_p = score_p;
   this.input_params_p = input_params_p;
   this.GA = genetic_algorithm;
-  this.index = index;
+  this.playerIndex = playerIndex;
+  this.gameIndex = gameIndex;
   this.base = new Base(this);
   this.player = new Player(this);
-  this.rng = new RNG(RNGSEED);
+  this.rng = new RNG(SEEDS[gameIndex]);
   for (var i = 0; i < this.platformCount; i++) {
     this.platforms.push(new Platform(this));
   }
@@ -169,6 +170,9 @@ Game.prototype.collides = function() {
 }
 
 Game.prototype.updateScore = function() {
+  if (this.gameIndex === 1 && this.playerIndex == 1) {
+    console.log("Score is: " + this.score);
+  }
   var scoreText = document.getElementById(this.score_p);
   scoreText.innerHTML = this.score;
 }

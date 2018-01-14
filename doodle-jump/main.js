@@ -60,19 +60,28 @@ Game.prototype.calculateInputParams = function() {
   }
 }
 
-function startOneGame(ctx, sb, sp, ip, ga, i) {
-  var gameObj = new Game(ctx, sb, sp, ip, ga, i);
+function startOneGame(ctx, sb, sp, ip, ga, playerIndex, gameIndex) {
+  var gameObj = new Game(ctx, sb, sp, ip, ga, playerIndex, gameIndex);
   gameObj.init();
 }
 
 function startAllGames() {
+  SEEDS = Array.apply(null, Array(PARALLEL_GAMES)).map(function(){return Math.random()})
   RNGSEED = Math.random();
-  for (var i = 0; i < NUMBER_OF_GAMES; i++) {
-    var canvas = document.getElementById(`canvas_${i}`),
-    ctx = canvas.getContext('2d');
-    canvas.width = width;
-    canvas.height = height;
-    startOneGame(ctx, `scoreBoard_${i}`, `score_${i}`, `input_params${i}`, GA, i);
+  for (var playerIndex = 0; playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
+    for (var gameIndex = 0; gameIndex < PARALLEL_GAMES; gameIndex++) {
+      var canvas = document.getElementById(`canvas_${playerIndex}${gameIndex}`),
+      ctx = canvas.getContext('2d');
+      canvas.width = width;
+      canvas.height = height;
+      startOneGame(ctx,
+                   `scoreBoard_${playerIndex}${gameIndex}`,
+                   `score_${playerIndex}${gameIndex}`,
+                   `input_params${playerIndex}${gameIndex}`,
+                   GA,
+                   playerIndex,
+                   gameIndex);
+    }
   }
 }
 
@@ -112,14 +121,18 @@ function stop() {
 function main() {
   var game = document.getElementById('game');
   var html = "";
-  for (var i = 0; i < NUMBER_OF_GAMES; i++) {
-    html += `<div class="wrapper">
-              <canvas id="canvas_${i}" style="margin-bottom:10px;margin-left:10px;border:1px solid #d3d3d3;"></canvas>
-              <div id="scoreBoard_${i}">
-                <p>Score: </p><p id="score_${i}">0</p>
-                <p>Input parameters: </p><p id="input_params${i}"></p>
-              </div>
-            </div>`;
+  for (var playerIndex = 0; playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
+    html += `<div class="container">`;
+    for (var gameIndex = 0; gameIndex < PARALLEL_GAMES; gameIndex++) {
+        html += `<div class="wrapper">
+                  <canvas id="canvas_${playerIndex}${gameIndex}" style="margin-bottom:10px;margin-left:10px;border:1px solid #d3d3d3;"></canvas>
+                  <div id="scoreBoard_${playerIndex}${gameIndex}">
+                    <p>Score: </p><p id="score_${playerIndex}${gameIndex}">0</p>
+                    <p>Input parameters: </p><p id="input_params${playerIndex}${gameIndex}"></p>
+                  </div>
+                </div>`
+    }
+    html += `</div>`;
   }
   game.innerHTML = html;
 
@@ -139,16 +152,19 @@ slider.oninput = function() {
     document.getElementById('speedUpValue').innerHTML = SPEED_UP_FACTOR;
 }
 
-var NUMBER_OF_GAMES = 16;
+var NUMBER_OF_PLAYERS = 16;
 var TOP_UNIT_NUMBER = 4;
 var SPEED_UP_FACTOR = 1;
+var PARALLEL_GAMES = 3;
 
 document.getElementById('speedUpValue').innerHTML = SPEED_UP_FACTOR;
 
 main();
 
+
+var SEEDS = Array.apply(null, Array(PARALLEL_GAMES)).map(function(){return Math.random()})
 var RNGSEED = Math.random();
-var GA = new GeneticAlgorithm(NUMBER_OF_GAMES,TOP_UNIT_NUMBER);
+var GA = new GeneticAlgorithm(NUMBER_OF_PLAYERS, PARALLEL_GAMES, TOP_UNIT_NUMBER);
 GA.reset();
 GA.createPopulation();
 showStats();
