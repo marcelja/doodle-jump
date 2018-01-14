@@ -90,6 +90,8 @@ GeneticAlgorithm.prototype = {
             this.evolvePopulation();
 			this.iteration++;
             this.alive = this.max_units * this.parallel_games;
+            this.fitnessPerGeneration = {};
+            this.scoresPerGeneration = {};
             restartAllGames();
 		}
 	},
@@ -107,6 +109,13 @@ GeneticAlgorithm.prototype = {
 
         var bestScore = Math.max.apply(null, bestScoreHelper);
         var bestFitness = Math.max.apply(null, bestFitnessHelper);
+
+        // if the top winner has the best fitness in the history, store its achievement!
+        if (bestFitness > this.best_fitness){
+            this.best_population = this.iteration;
+            this.best_fitness = bestFitness;
+            this.best_score = bestScore;
+        }
 
     },
 
@@ -135,8 +144,6 @@ GeneticAlgorithm.prototype = {
             this.fitnessPerGeneration[game.playerIndex] = [fitness];
             this.scoresPerGeneration[game.playerIndex] = [game.score];
         }
-		// this.Population[game.index].fitness = Math.max(0, 0.8 * game.score * game.score - 0.2 * 0.1 * game.loops);
-		// this.Population[game.index].score = game.score;
 	},
 
 	// evolves the population by performing selection, crossover and mutations on the units
@@ -207,13 +214,7 @@ GeneticAlgorithm.prototype = {
 			// update population by changing the old unit with the new one
 			this.Population[i] = newUnit;
 		}
-		
-		// if the top winner has the best fitness in the history, store its achievement!
-		if (Winners[0].fitness > this.best_fitness){
-			this.best_population = this.iteration;
-			this.best_fitness = Winners[0].fitness;
-			this.best_score = Winners[0].score;
-		}
+
 		
 		// sort the units of the new population	in ascending order by their index
 		//this.Population.sort(function(unitA, unitB){

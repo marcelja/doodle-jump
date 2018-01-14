@@ -100,7 +100,7 @@ function updateStats () {
   document.getElementById("best_score").innerHTML = "Best score: " + GA.best_score.toFixed(2);
   document.getElementById("best_fitness").innerHTML = "Best fitness: " + GA.best_fitness.toFixed(2);
   // Population is already sorted. Hence we can use first element in population
-  document.getElementById("best_score_gen").innerHTML += " " + GA.Population[0].score;
+  document.getElementById("best_score_gen").innerHTML += "  " + GA.Population[0].score.toFixed(2);
 }
 
 function stop() {
@@ -141,7 +141,7 @@ function main() {
                    <p id="best_generation">The best unit was born in generation 1</p>
                    <p id="best_score">Best score:</p>
                    <p id="best_fitness">Best fitness:</p>
-                   <p id="best_score_gen">Best score per generation:</p>`;
+                   <p id="best_score_gen">Best score per generation (avg over game):</p>`;
   stats.innerHTML = statsHtml;
 }
 
