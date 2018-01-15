@@ -22,10 +22,10 @@ Game.prototype.platformParams = function(inputPlatformIndex) {
     }
   }
   params[3] = this.player.y - platform.y;
-  params[4] = (platform.type == 4) ? 1 : 0;
-  params[5] = (platform.type == 3) ? 1 : 0;
-  params[6] = (platform.type == 2) ? 1 : 0;
-  params[7] = platform.spring;
+  params[4] = (platform.type == 3) ? 1 : 0;
+  // params[5] = (platform.type == 4) ? 1 : 0;
+  // params[6] = (platform.type == 2) ? 1 : 0;
+  // params[7] = platform.spring;
 
   return params;
 }
