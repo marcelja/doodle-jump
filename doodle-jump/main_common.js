@@ -5,7 +5,6 @@ function startOneGame(ctx, sb, sp, ip, ga, playerIndex, gameIndex, fast) {
 }
 
 Game.prototype.updateInputParams = function() {
-  var inputParamsText =  document.getElementById(this.input_params_p);
   var numberPlatformParams = 6;
   
   // keep updating input params after using spring
