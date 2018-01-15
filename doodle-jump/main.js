@@ -66,7 +66,7 @@ function main() {
                   <div id="scoreBoard_${playerIndex}${gameIndex}" style="margin:20px;">
                     <p>Score: </p><p id="score_${playerIndex}${gameIndex}">0</p>
                     <p>Input parameters: </p><p id="input_params${playerIndex}${gameIndex}"></p>
-                    <button id="replay_${playerIndex}${gameIndex}" onclick="replay(${playerIndex}${gameIndex})" style="visibility:hidden">Replay</button>
+                    <button id="replay_${playerIndex*PARALLEL_GAMES+gameIndex}" onclick="replay(${playerIndex*PARALLEL_GAMES+gameIndex})" style="visibility:hidden">Replay</button>
                   </div>
                 </div>`
     }

@@ -45,7 +45,7 @@ Game.prototype.init = function() {
   this.calculateInputParams();
   this.firstRun = false;
 
-  document.getElementById(`replay_${this.playerIndex}${this.gameIndex}`).style.visibility = 'hidden';
+  document.getElementById(`replay_${this.playerIndex*PARALLEL_GAMES+this.gameIndex}`).style.visibility = 'hidden';
   this.animloop();
 
   this.hideMenu();
@@ -220,15 +220,12 @@ Game.prototype.collides = function() {
 }
 
 Game.prototype.updateScore = function() {
-  if (this.gameIndex === 1 && this.playerIndex == 1) {
-    console.log("Score is: " + this.score);
-  }
   var scoreText = document.getElementById(this.score_p);
   scoreText.innerHTML = this.score;
 }
 
 Game.prototype.gameOver = function() {
-  document.getElementById(`replay_${this.playerIndex}${this.gameIndex}`).style.visibility = 'visible';
+  document.getElementById(`replay_${this.playerIndex*PARALLEL_GAMES+this.gameIndex}`).style.visibility = 'visible';
   this.platforms.forEach(function(p, i) {
     p.y -= 12;
   });
