@@ -1,4 +1,4 @@
-function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, playerIndex, gameIndex) {
+function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, playerIndex, gameIndex, simulate_immediately) {
   this.platforms = [],
   this.image = document.getElementById("sprite"),
   this.player, this.platformCount = 10,
@@ -9,6 +9,9 @@ function Game(ctx, scoreBoard, score_p, input_params_p, genetic_algorithm, playe
   this.broken = 0,
   this.dir, this.score = 0, this.firstRun = true;
   this.jumpCount = 0;
+  this.replay = 0;
+  this.lastFrames = [];
+  this.simulate_immediately = simulate_immediately;
 
   this.ctx = ctx;
   this.scoreBoard = scoreBoard;
@@ -42,6 +45,7 @@ Game.prototype.init = function() {
   this.calculateInputParams();
   this.firstRun = false;
 
+  document.getElementById(`replay_${this.playerIndex}${this.gameIndex}`).style.visibility = 'hidden';
   this.animloop();
 
   this.hideMenu();
@@ -51,7 +55,9 @@ Game.prototype.init = function() {
 
 //Function for clearing canvas in each consecutive frame
 Game.prototype.paintCanvas = function() {
-  this.ctx.clearRect(0, 0, width, height);
+  if (!this.simulate_immediately) {
+    this.ctx.clearRect(0, 0, width, height);
+  }
 }
 
 //Function to update everything
@@ -68,10 +74,13 @@ Game.prototype.update = function() {
   this.springCalc();
 
   this.playerCalc();
-  this.player.draw();
+  if (!this.simulate_immediately) {
+    this.player.draw();
 
-  this.base.draw();
+    this.base.draw();
+  }
 
+  this.saveFrame();
   this.updateScore();
   this.iterationsSinceLastScoreIncrease++;
   if (this.iterationsSinceLastScoreIncrease == 200) {
@@ -81,14 +90,55 @@ Game.prototype.update = function() {
   }
 }
 
+Game.prototype.saveFrame = function() {
+  if (this.lastFrames.length == 200) {
+    this.lastFrames.shift();
+  }
+  var elements = []
+  for (var i = 0; i < this.platforms.length; i++) {
+    elements.push(this.platforms[i].getFrame());
+  }
+  elements.push(this.player.getFrame());
+  this.lastFrames.push(elements);
+}
+
+
+Game.prototype.startReplay = function() {
+  this.replay = 1;
+  this.animloop();
+}
+
+Game.prototype.updateReplay = function() {
+  if (this.replay == this.lastFrames.length) {
+    this.replay = 0;
+  } else {
+    this.paintCanvas();
+    for (var i = 0; i < this.lastFrames[this.replay].length; i++) {    
+      this.ctx.drawImage(this.image, this.lastFrames[this.replay][i][1], this.lastFrames[this.replay][i][2], this.lastFrames[this.replay][i][3], this.lastFrames[this.replay][i][4], this.lastFrames[this.replay][i][5], this.lastFrames[this.replay][i][6], this.lastFrames[this.replay][i][7], this.lastFrames[this.replay][i][8]);
+    }
+    this.replay += 1;
+  }
+}
+
 Game.prototype.animloop = function() {
+  if (this.replay > 0) {
+    this.updateReplay();
+    this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
+  }
+
   if (!this.died_message_sent) {
     for (var i = 0; i < SPEED_UP_FACTOR; i++) {
       if (!this.died_message_sent) {
         this.update();
       }
     }
-    this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
+    if (this.simulate_immediately) {
+      while(!this.died_message_sent) {
+        this.update();
+      }
+    } else {
+      this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
+    }
   }
 };
 
@@ -178,6 +228,7 @@ Game.prototype.updateScore = function() {
 }
 
 Game.prototype.gameOver = function() {
+  document.getElementById(`replay_${this.playerIndex}${this.gameIndex}`).style.visibility = 'visible';
   this.platforms.forEach(function(p, i) {
     p.y -= 12;
   });
@@ -198,6 +249,7 @@ Game.prototype.gameOver = function() {
     window.cancelAnimationFrame(this.requestAnimId);
     this.died_message_sent = true;
   }
+
 }
 
 //Hides the menu

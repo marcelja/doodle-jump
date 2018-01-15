@@ -3,8 +3,10 @@
 /***********************************************************************************/
 
 BATCH_SIZE = 10;
-MAX_TOP_UNITS = 6;
-MIN_TOP_UNITS = 2;
+MAX_TOP_UNITS = 5;
+MIN_TOP_UNITS = 3;
+MAX_MUTATION_RATE = 0.24;
+MIN_MUTATION_RATE = 0.18;
 
 var GeneticAlgorithm = function(max_units, parallel_games, top_units){
 	this.max_units = max_units; // max number of units in population
@@ -65,6 +67,27 @@ GeneticAlgorithm.prototype = {
 			this.Population.push(newUnit);
 		}
 		this.alive = this.max_units * this.parallel_games;
+	},
+
+	// creates a new population
+	createPopulationFromJson : function(givenJsons){
+		// clear any existing population
+		this.Population.splice(0, this.Population.length);
+		
+		for (var i=0; i<this.max_units; i++){
+			// create a new unit from json
+			var newUnit = synaptic.Network.fromJSON(givenJsons[i]); 
+			
+			// set additional parameters for the new unit
+			newUnit.index = i;
+			newUnit.fitness = 0;
+			newUnit.score = 0;
+			newUnit.isWinner = false;
+			
+			// add the new unit to the population 
+			this.Population.push(newUnit);
+		}
+		this.alive = this.max_units;
 	},
 	
 	// activates the neural network of an unit from the population 
@@ -172,9 +195,10 @@ GeneticAlgorithm.prototype = {
 			// Playing as the God, we can destroy this bad population and try with another one.
 			this.createPopulation();
 		} else {
-			var mutatation_rate = this.lastBestFitness / current_best_fitness / 10;
-			mutatation_rate = Math.max(Math.min(0.5, mutatation_rate), 0.05);
-			console.log("Mutation rate: " + mutatation_rate);
+			var mutatation_rate = this.lastBestFitness / (current_best_fitness + this.lastBestFitness);
+			mutatation_rate = Math.min(1, mutatation_rate);
+			mutatation_rate = mutatation_rate * (MAX_MUTATION_RATE - MIN_MUTATION_RATE) + MIN_MUTATION_RATE;
+			//console.log("Mutation rate: " + mutatation_rate);
 			this.lastBestFitness = current_best_fitness;
 			this.last_average_fitness = current_average_fitness;
 			this.mutateRate = mutatation_rate; // else set the mutatation rate to the real value
@@ -212,6 +236,7 @@ GeneticAlgorithm.prototype = {
 			newUnit.isWinner = false;
 			
 			// update population by changing the old unit with the new one
+			delete this.Population[i];
 			this.Population[i] = newUnit;
 		}
 
@@ -240,7 +265,7 @@ GeneticAlgorithm.prototype = {
 
 		this.lastFitnessOfMaxTop = sortedPopulation[MAX_TOP_UNITS - 1].fitness;
 
-		console.log(this.top_units);
+		//console.log(this.top_units);
 
 		
 		// mark the top units as the winners!

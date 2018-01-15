@@ -22,6 +22,10 @@ function Player(game) {
   this.last_y = height;
   this.y = height;
 
+  this.getFrame = function() {
+    return [true, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height];
+  }
+
   //Function to draw it
   this.draw = function() {
 

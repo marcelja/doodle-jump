@@ -6,68 +6,14 @@ window.requestAnimFrame = (function() {
   };
 })();
 
-var width = 422,
-  height = 552;
-
-
-Game.prototype.updateInputParams = function() {
-  var inputParamsText =  document.getElementById(this.input_params_p);
-  
-  // keep updating input params after using spring
-  if (this.player.vy < -8) this.calculateInputParams();
-
-  this.input_params[0] = this.player.vy;
-  this.input_params[1] = this.player.vx;
-
-  var player_mid_x = this.player.x + (this.player.width / 2);
-
-  for (var i = 0; i < this.inputPlatforms.length; i++) {
-    var platform_mid_x = this.inputPlatforms[i].x + (this.inputPlatforms[i].width / 2);
-    this.input_params[2+i*2] = player_mid_x - platform_mid_x;
-
-    // remove if walls disabled
-    if (Math.abs(player_mid_x - platform_mid_x) > (width + this.player.width) / 2) {
-      if (player_mid_x - platform_mid_x < 0) {
-        this.input_params[2+i*2] = width + this.player.width + player_mid_x - platform_mid_x;
-      } else {
-        this.input_params[2+i*2] = - width - this.player.width + player_mid_x - platform_mid_x;
-      }
-    }
-    // end
-    this.input_params[3+i*2] = this.player.y - this.inputPlatforms[i].y;
-  }
-
-  // inputParamsText.innerHTML = this.input_params;
-}
-
-Game.prototype.calculateInputParams = function() {
-  var platform_helper = [];
-  for (var i = 0; i < this.platforms.length; i++) {
-    platform_helper.push(this.platforms[i]);
-  }
-
-  platform_helper.sort(function(platformA, platformB) {
-    return platformB.y - platformA.y;
-  });
-
-  for (var i = 0; i < platform_helper.length; i++) {
-    if (platform_helper[i].y < this.player.y) {
-      this.inputPlatforms[0] = platform_helper[i];
-      this.inputPlatforms[1] = platform_helper[i+1];
-      // this.inputPlatforms[2] = platform_helper[i+2];
-      break;
-    }
-  }
-}
-
-function startOneGame(ctx, sb, sp, ip, ga, playerIndex, gameIndex) {
-  var gameObj = new Game(ctx, sb, sp, ip, ga, playerIndex, gameIndex);
-  gameObj.init();
-}
+var width = 422;
+var height = 552;
+var allGames = [];
 
 function startAllGames() {
   SEEDS = Array.apply(null, Array(PARALLEL_GAMES)).map(function(){return Math.random()})
   RNGSEED = Math.random();
+
   for (var playerIndex = 0; playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
     for (var gameIndex = 0; gameIndex < PARALLEL_GAMES; gameIndex++) {
       var canvas = document.getElementById(`canvas_${playerIndex}${gameIndex}`),
@@ -80,17 +26,9 @@ function startAllGames() {
                    `input_params${playerIndex}${gameIndex}`,
                    GA,
                    playerIndex,
-                   gameIndex);
+                   gameIndex,
+                   false);
     }
-  }
-}
-
-function restartAllGames() {
-  if (document.getElementById("wait").checked) {
-    setTimeout(restartAllGames, 1000);
-  } else {
-    updateStats();
-    startAllGames();
   }
 }
 
@@ -103,19 +41,18 @@ function updateStats () {
   document.getElementById("best_score_gen").innerHTML += "  " + GA.Population[0].score.toFixed(2);
 }
 
-function stop() {
-    if (SPEED_UP_FACTOR != 0) {
-        old_speed = SPEED_UP_FACTOR;
-        SPEED_UP_FACTOR = 0;
-        stopButton = document.getElementById("stopButton");
-        stopButton.text = "Start"
-        stopButton.style.background = "url('http://i.imgur.com/2WEhF.png') 0 0 no-repeat";
-    } else {
-        stopButton = document.getElementById("stopButton");
-        stopButton.text = "Stop"
-        stopButton.style.background = "url('http://i.imgur.com/2WEhF.png') 0 -31px no-repeat";
-        SPEED_UP_FACTOR = old_speed;
-    }
+function restartAllGames() {
+  if (document.getElementById("wait").checked) {
+    setTimeout(restartAllGames, 1000);
+  } else {
+    updateStats();
+    allGames = [];
+    startAllGames();
+  }
+}
+
+function replay(gameIndex) {
+  allGames[gameIndex].startReplay();
 }
 
 function main() {
@@ -126,9 +63,10 @@ function main() {
     for (var gameIndex = 0; gameIndex < PARALLEL_GAMES; gameIndex++) {
         html += `<div class="wrapper">
                   <canvas id="canvas_${playerIndex}${gameIndex}" style="margin-bottom:10px;margin-left:10px;border:1px solid #d3d3d3;"></canvas>
-                  <div id="scoreBoard_${playerIndex}${gameIndex}">
+                  <div id="scoreBoard_${playerIndex}${gameIndex}" style="margin:20px;">
                     <p>Score: </p><p id="score_${playerIndex}${gameIndex}">0</p>
                     <p>Input parameters: </p><p id="input_params${playerIndex}${gameIndex}"></p>
+                    <button id="replay_${playerIndex}${gameIndex}" onclick="replay(${playerIndex}${gameIndex})" style="visibility:hidden">Replay</button>
                   </div>
                 </div>`
     }
