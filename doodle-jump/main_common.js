@@ -6,6 +6,7 @@ function startOneGame(ctx, sb, sp, ip, ga, playerIndex, gameIndex, fast) {
 
 Game.prototype.updateInputParams = function() {
   var inputParamsText =  document.getElementById(this.input_params_p);
+  var numberPlatformParams = 6;
   
   // keep updating input params after using spring
   if (this.player.vy < -8) this.calculateInputParams();
@@ -16,28 +17,34 @@ Game.prototype.updateInputParams = function() {
   var player_mid_x = this.player.x + (this.player.width / 2);
 
   for (var i = 0; i < this.inputPlatforms.length; i++) {
-    var platform_mid_x = this.inputPlatforms[i].x + (this.inputPlatforms[i].width / 2);
-    this.input_params[2+i*2] = player_mid_x - platform_mid_x;
+    var platform = this.inputPlatforms[i];
+    var platform_mid_x = platform.x + (platform.width / 2);
+    this.input_params[2+i*numberPlatformParams] = player_mid_x - platform_mid_x;
 
     // remove if walls disabled
     if (Math.abs(player_mid_x - platform_mid_x) > (width + this.player.width) / 2) {
       if (player_mid_x - platform_mid_x < 0) {
-        this.input_params[2+i*2] = width + this.player.width + player_mid_x - platform_mid_x;
+        this.input_params[2+i*numberPlatformParams] = width + this.player.width + player_mid_x - platform_mid_x;
       } else {
-        this.input_params[2+i*2] = - width - this.player.width + player_mid_x - platform_mid_x;
+        this.input_params[2+i*numberPlatformParams] = - width - this.player.width + player_mid_x - platform_mid_x;
       }
     }
     // end
-    this.input_params[3+i*2] = this.player.y - this.inputPlatforms[i].y;
+    this.input_params[3+i*numberPlatformParams] = this.player.y - platform.y;
+    this.input_params[4+i*numberPlatformParams] = (platform.type == 4) ? 1 : 0;
+    this.input_params[5+i*numberPlatformParams] = (platform.type == 3) ? 1 : 0;
+    this.input_params[6+i*numberPlatformParams] = (platform.type == 2) ? 1 : 0;
+    this.input_params[7+i*numberPlatformParams] = platform.spring;
   }
-
   // inputParamsText.innerHTML = this.input_params;
 }
 
 Game.prototype.calculateInputParams = function() {
   var platform_helper = [];
   for (var i = 0; i < this.platforms.length; i++) {
-    platform_helper.push(this.platforms[i]);
+    if (this.platforms[i].state == 0 && this.platforms[i].flag == 0) {
+      platform_helper.push(this.platforms[i]);
+    }
   }
 
   platform_helper.sort(function(platformA, platformB) {

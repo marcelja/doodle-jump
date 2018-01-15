@@ -195,9 +195,11 @@ Game.prototype.collides = function() {
         return;
       } else if (p.type == 4 && p.state === 0) {
         self.player.jump();
+        self.calculateInputParams();
         p.state = 1;
-      } else if (p.flag == 1) return;
-      else {
+      } else if (p.flag == 1) {
+        return;
+      } else {
         self.player.jump();
         self.calculateInputParams();
       }

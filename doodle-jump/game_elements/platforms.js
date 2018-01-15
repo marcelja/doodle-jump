@@ -16,6 +16,8 @@ function Platform(game) {
   this.cwidth = 105;
   this.cheight = 31;
 
+  this.spring = 0;
+
   this.getFrame = function() {
     return [this.appearance, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height];
   }
@@ -56,15 +58,21 @@ function Platform(game) {
   else if (score >= 100 && score < 500) this.types = [1, 1, 1, 1, 2, 2];
   else this.types = [1];
   */
-  this.types = [1];
+
+  if (game.score >= 5000) this.types = [2, 2, 2, 3, 3, 3, 4, 4, 4];
+  else if (game.score >= 2000 && game.score < 5000) this.types = [1, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4];
+  else if (game.score >= 1000 && game.score < 2000) this.types = [1, 1, 1, 1, 3, 4, 4, 4];
+  else if (game.score >= 500 && game.score < 1000) this.types = [1, 1, 1, 1, 1, 3, 4, 4];
+  // else if (score >= 100 && score < 500) this.types = [1, 1, 1, 1, 2, 2];
+  else this.types = [1];
   this.type = this.types[Math.floor(Math.random() * this.types.length)];
 
   //We can't have two consecutive breakable platforms otherwise it will be impossible to reach another platform sometimes!
-  if (this.type == 3 && broken < 1) {
-    broken++;
-  } else if (this.type == 3 && broken >= 1) {
+  if (this.type == 3 && game.broken < 1) {
+    game.broken++;
+  } else if (this.type == 3 && game.broken >= 1) {
     this.type = 1;
-    broken = 0;
+    game.broken = 0;
   }
 
   this.moved = 0;
@@ -86,6 +94,7 @@ function Platform_broken_substitute(game) {
   this.cheight = 60;
 
   this.appearance = false;
+  this.spring = 0;
 
   this.getFrame = function() {
     return [this.appearance, this.cx, this.cy, this.cwidth, this.cheight, this.x, this.y, this.width, this.height];

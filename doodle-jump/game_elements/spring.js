@@ -30,6 +30,7 @@ Game.prototype.springCalc = function() {
   var p = this.platforms[0];
 
   if (p.type == 1 || p.type == 2) {
+    p.spring = 1;
     s.x = p.x + p.width / 2 - s.width / 2;
     s.y = p.y - p.height - 10;
 
