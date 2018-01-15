@@ -4,37 +4,69 @@ function startOneGame(ctx, sb, sp, ip, ga, playerIndex, gameIndex, fast) {
   allGames.push(gameObj);
 }
 
+Game.prototype.platformParams = function(inputPlatformIndex) {
+  var platform = this.inputPlatforms[inputPlatformIndex];
+  var params = [this.player.vy, this.player.vx];
+
+  var player_mid_x = this.player.x + (this.player.width / 2);
+  var platform_mid_x = platform.x + (platform.width / 2);
+
+  params[2] = player_mid_x - platform_mid_x;
+
+  // remove if walls disabled
+  if (Math.abs(player_mid_x - platform_mid_x) > (width + this.player.width) / 2) {
+    if (player_mid_x - platform_mid_x < 0) {
+      params[2] = width + this.player.width + player_mid_x - platform_mid_x;
+    } else {
+      params[2] = - width - this.player.width + player_mid_x - platform_mid_x;
+    }
+  }
+  params[3] = this.player.y - platform.y;
+  params[4] = (platform.type == 4) ? 1 : 0;
+  params[5] = (platform.type == 3) ? 1 : 0;
+  params[6] = (platform.type == 2) ? 1 : 0;
+  params[7] = platform.spring;
+
+  return params;
+}
+
 Game.prototype.updateInputParams = function() {
-  var numberPlatformParams = 6;
+  // var numberPlatformParams = 6;
+  var numberInputPlatforms = 2;
+  this.input_params = [];
   
   // keep updating input params after using spring
   if (this.player.vy < -8) this.calculateInputParams();
 
-  this.input_params[0] = this.player.vy;
-  this.input_params[1] = this.player.vx;
-
-  var player_mid_x = this.player.x + (this.player.width / 2);
-
-  for (var i = 0; i < this.inputPlatforms.length; i++) {
-    var platform = this.inputPlatforms[i];
-    var platform_mid_x = platform.x + (platform.width / 2);
-    this.input_params[2+i*numberPlatformParams] = player_mid_x - platform_mid_x;
-
-    // remove if walls disabled
-    if (Math.abs(player_mid_x - platform_mid_x) > (width + this.player.width) / 2) {
-      if (player_mid_x - platform_mid_x < 0) {
-        this.input_params[2+i*numberPlatformParams] = width + this.player.width + player_mid_x - platform_mid_x;
-      } else {
-        this.input_params[2+i*numberPlatformParams] = - width - this.player.width + player_mid_x - platform_mid_x;
-      }
-    }
-    // end
-    this.input_params[3+i*numberPlatformParams] = this.player.y - platform.y;
-    this.input_params[4+i*numberPlatformParams] = (platform.type == 4) ? 1 : 0;
-    this.input_params[5+i*numberPlatformParams] = (platform.type == 3) ? 1 : 0;
-    this.input_params[6+i*numberPlatformParams] = (platform.type == 2) ? 1 : 0;
-    this.input_params[7+i*numberPlatformParams] = platform.spring;
+  for (var i = 0; i < numberInputPlatforms; i++) {
+    this.input_params.push(this.platformParams(i));
   }
+
+  // this.input_params[0] = this.player.vy;
+  // this.input_params[1] = this.player.vx;
+
+  // var player_mid_x = this.player.x + (this.player.width / 2);
+
+  // for (var i = 0; i < this.inputPlatforms.length; i++) {
+  //   var platform = this.inputPlatforms[i];
+  //   var platform_mid_x = platform.x + (platform.width / 2);
+  //   this.input_params[2+i*numberPlatformParams] = player_mid_x - platform_mid_x;
+
+  //   // remove if walls disabled
+  //   if (Math.abs(player_mid_x - platform_mid_x) > (width + this.player.width) / 2) {
+  //     if (player_mid_x - platform_mid_x < 0) {
+  //       this.input_params[2+i*numberPlatformParams] = width + this.player.width + player_mid_x - platform_mid_x;
+  //     } else {
+  //       this.input_params[2+i*numberPlatformParams] = - width - this.player.width + player_mid_x - platform_mid_x;
+  //     }
+  //   }
+  //   // end
+  //   this.input_params[3+i*numberPlatformParams] = this.player.y - platform.y;
+  //   this.input_params[4+i*numberPlatformParams] = (platform.type == 4) ? 1 : 0;
+  //   this.input_params[5+i*numberPlatformParams] = (platform.type == 3) ? 1 : 0;
+  //   this.input_params[6+i*numberPlatformParams] = (platform.type == 2) ? 1 : 0;
+  //   this.input_params[7+i*numberPlatformParams] = platform.spring;
+  // }
   // inputParamsText.innerHTML = this.input_params;
 }
 

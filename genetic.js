@@ -55,7 +55,7 @@ GeneticAlgorithm.prototype = {
 		for (var i=0; i<this.max_units; i++){
 			// create a new unit by generating a random Synaptic neural network
 			// with 12 neurons in the input layer, 20 neurons in the hidden layer and 3 neuron in the output layer
-			var newUnit = new synaptic.Architect.Perceptron(14, 20, 3);
+			var newUnit = new synaptic.Architect.Perceptron(8, 20, 3);
 			
 			// set additional parameters for the new unit
 			newUnit.index = i;
@@ -97,12 +97,22 @@ GeneticAlgorithm.prototype = {
 		var inputs = game.input_params;
 		
 		// calculate outputs by activating synaptic neural network of this bird
-		var outputs = this.Population[game.playerIndex].activate(inputs);
-			
+		var outputs = [];
+		// this.Population[game.playerIndex].activate(inputs);
+
+		for (var i = 0; i < game.input_params.length; i++) {
+			var inputs = game.input_params[i];
+			outputs.push.apply(outputs, this.Population[game.playerIndex].activate(inputs));
+		}
+
+		var indexOfMaxValue = outputs.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+		// if (game.playerIndex == 0 && game.gameIndex == 0) {
+		// 	console.log(outputs);
+		// }
 		// perform flap if output is greater than 0.5
-		if (outputs[0] > outputs[1] && outputs[0] > outputs[2]) game.goLeft();
-		if (outputs[1] >= outputs[0] && outputs[1] > outputs[2]) game.goRight();
-		if (outputs[2] >= outputs[0] && outputs[2] >= outputs[1]) game.stopMoving();
+		if (indexOfMaxValue % 3 == 0) game.goLeft();
+		if (indexOfMaxValue % 3 == 1) game.goRight();
+		if (indexOfMaxValue % 3 == 2) game.stopMoving();
 	},
 
 	gameDied : function(game){
