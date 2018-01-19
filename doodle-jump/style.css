@@ -20,6 +20,12 @@ canvas {
   border: 1px solid black;
 }
 
+#statsContainer {
+    float: left;
+    padding-bottom: 50px;
+    width: 100%;
+}
+
 #gamestats {
   padding-left: 80px;
   padding-top: 20px;
