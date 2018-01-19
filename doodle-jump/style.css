@@ -15,10 +15,12 @@ canvas {
 }
 
 .wrapper {
-  width: 440px;
   float:left;
   border: 1px solid black;
 }
+
+#game {
+    float: left;
 
 #statsContainer {
     float: left;
@@ -36,6 +38,7 @@ canvas {
 
 #gameContainer {
   float: left;
+  padding-left: 3%;
 }
 
 #scoreBoard {

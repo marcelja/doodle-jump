@@ -59,10 +59,11 @@ function main() {
   var game = document.getElementById('game');
   var html = "";
   for (var playerIndex = 0; playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
-    html += `<div class="container">`;
+    html += `<div class="wrapper" style="margin-bottom:30px">
+              <div style="margin-left:20px" >Network: ${playerIndex}</div>`;
     for (var gameIndex = 0; gameIndex < PARALLEL_GAMES; gameIndex++) {
-        html += `<div class="wrapper">
-                  <canvas id="canvas_${playerIndex}${gameIndex}" style="margin-bottom:10px;margin-left:10px;border:1px solid #d3d3d3;"></canvas>
+        html += `<div class="wrapper" id="game" style="padding-left:20px">
+                  <canvas id="canvas_${playerIndex}${gameIndex}" style="margin-bottom:10px;margin-right:20px;margin-top:15px;border:1px solid #d3d3d3;"></canvas>
                   <div id="scoreBoard_${playerIndex}${gameIndex}" style="margin:20px;">
                     <p>Score: </p><p id="score_${playerIndex}${gameIndex}">0</p>
                     <button id="replay_${playerIndex*PARALLEL_GAMES+gameIndex}" onclick="replay(${playerIndex*PARALLEL_GAMES+gameIndex})" style="visibility:hidden">Replay</button>
