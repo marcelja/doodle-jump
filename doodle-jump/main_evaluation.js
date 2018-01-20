@@ -1,10 +1,11 @@
 // RequestAnimFrame: a browser API for getting smooth animations
+/*
 window.requestAnimFrame = (function() {
   return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
   function(callback) {
     window.setTimeout(callback, 1000 / 60);
   };
-})();
+})();*/
 
 var width = 422,
   height = 552;
@@ -14,6 +15,7 @@ function sleep(ms) {
 }
 
 async function startAllGames() {
+  /*
 	timeout = false;
 	console.log('Generation ' + GA[0].iteration);
 	if (GA[0].iteration-1%10 == 0) {
@@ -22,18 +24,45 @@ async function startAllGames() {
 	if (GA[0].iteration == 200) {
 		return;
 	}
-    for (var j = 0; j < NUMBER_OF_RUNS; j++) {
-    	RNGSEED = Math.random();
-    	for (var i = 0; i < NUMBER_OF_GAMES; i++) {
-    	  var canvas = document.getElementById(`canvas_${j*NUMBER_OF_GAMES + i}`),
-    	  ctx = canvas.getContext('2d');
-    	  canvas.width = width;
-    	  canvas.height = height;
-    	  startOneGame(ctx, `scoreBoard_${j*NUMBER_OF_GAMES + i}`, `score_${j*NUMBER_OF_GAMES + i}`, `input_params${j*NUMBER_OF_GAMES + i}`, GA[j], i, true);
-    	}
-  
+  for (var j = 0; j < NUMBER_OF_RUNS; j++) {
+  	startGeneration(j);
+  }
+  */
+  startGeneration(0);
+}
+
+function startGeneration(run) {
+  SEEDS = Array.apply(null, Array(PARALLEL_GAMES)).map(function(){return Math.random()})
+  RNGSEED = Math.random();
+  for (var i = 0; i < NUMBER_OF_PLAYERS; i++) {
+    for (var gameIndex = 0; gameIndex < PARALLEL_GAMES; gameIndex++) {
+      var canvas = document.getElementById(`canvas_${run*NUMBER_OF_PLAYERS + i}`),
+      ctx = canvas.getContext('2d');
+      canvas.width = width;
+      canvas.height = height;
+      startOneGame(ctx, `scoreBoard_${run*NUMBER_OF_PLAYERS + i}`, `score_${run*NUMBER_OF_PLAYERS + i}`, `input_params${run*NUMBER_OF_PLAYERS + i}`, GAS, i, gameIndex, true);
     }
-  
+    
+  }
+  continueWithNextGeneration();
+}
+
+GENERATION_NUMBER = 0;
+EXECUTED_RUN_NUMBER = 0;
+function continueWithNextGeneration() {
+
+  console.log(EXECUTED_RUN_NUMBER + ', ' + GENERATION_NUMBER);
+  GENERATION_NUMBER += 1;
+  if (GENERATION_NUMBER >= NUMBER_OF_GENERATIONS) {
+    GENERATION_NUMBER = 0;
+    EXECUTED_RUN_NUMBER += 1;
+    
+  }
+  if (EXECUTED_RUN_NUMBER >= NUMBER_OF_RUNS) {
+    //draw stats?
+    return;
+  }
+  return startGeneration(EXECUTED_RUN_NUMBER);
 }
 
 var average_score = Array(NUMBER_OF_RUNS);
@@ -49,18 +78,23 @@ function updateStats () {
 
 var runs_finished = 0;
 function restartAllGames() {
+
+  /*
 	runs_finished += 1;
 	if (runs_finished == NUMBER_OF_RUNS) {
 		runs_finished = 0;
 		updateStats();
 		startAllGames();
 	}
+  */
+  allGames = [];
+  //continueWithNextGeneration();
 }
 
 function main() {
   var game = document.getElementById('game');
   var html = "";
-  for (var i = 0; i < NUMBER_OF_GAMES * NUMBER_OF_RUNS; i++) {
+  for (var i = 0; i < NUMBER_OF_PLAYERS * NUMBER_OF_RUNS; i++) {
     html += `<div class="wrapper">
               <canvas id="canvas_${i}" style="margin-bottom:10px;margin-left:10px;border:1px solid #d3d3d3;"></canvas>
               <div id="scoreBoard_${i}">
@@ -129,11 +163,12 @@ function generateInitalPopulations(parallel_experiments_number, game_number) {
 }
 
 
+var NUMBER_OF_GENERATIONS = 10;
 var NUMBER_OF_RUNS = 10;
-var NUMBER_OF_GAMES = 16;
+var NUMBER_OF_PLAYERS = 16;
 var TOP_UNIT_NUMBER = 4;
 var SPEED_UP_FACTOR = 1;
-
+var PARALLEL_GAMES = 2;
 //the created file needs to be edited manually by adding 
 /*
 initial_population = '(here goes what was in it before)'
@@ -141,17 +176,20 @@ function getInitialPopulation() {
 	return JSON.parse(initial_population);
 }
 */
-//generateInitalPopulations(NUMBER_OF_RUNS, NUMBER_OF_GAMES);
+//generateInitalPopulations(NUMBER_OF_RUNS, NUMBER_OF_PLAYERS);
 
 document.getElementById('speedUpValue').innerHTML = SPEED_UP_FACTOR;
 
 main();
-
+var SEEDS = Array.apply(null, Array(PARALLEL_GAMES)).map(function(){return Math.random()})
 var GA = new Array(NUMBER_OF_RUNS);
 for (var i = 0; i < GA.length; i++) {
-	GA[i] = new GeneticAlgorithm(NUMBER_OF_GAMES,TOP_UNIT_NUMBER);
+	GA[i] = new GeneticAlgorithm(NUMBER_OF_PLAYERS,PARALLEL_GAMES,TOP_UNIT_NUMBER);
 	GA[i].reset();
 	GA[i].createPopulationFromJson(getInitialPopulation()[i]);
 	showStats();
 }
 
+var GAS = new GeneticAlgorithm(NUMBER_OF_PLAYERS, PARALLEL_GAMES, TOP_UNIT_NUMBER);
+GAS.reset();
+GAS.createPopulation();

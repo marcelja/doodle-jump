@@ -44,8 +44,10 @@ Game.prototype.init = function() {
   this.dir = "left";
   this.calculateInputParams();
   this.firstRun = false;
-
-  document.getElementById(`replay_${this.playerIndex*PARALLEL_GAMES+this.gameIndex}`).style.visibility = 'hidden';
+  if (!this.simulate_immediately) {
+    document.getElementById(`replay_${this.playerIndex*PARALLEL_GAMES+this.gameIndex}`).style.visibility = 'hidden';
+  }
+  
   this.animloop();
 
   this.hideMenu();
@@ -121,7 +123,7 @@ Game.prototype.updateReplay = function() {
 }
 
 Game.prototype.animloop = function() {
-  if (this.replay > 0) {
+  if (!this.simulate_immediately && this.replay > 0) {
     this.updateReplay();
     this.requestAnimId = requestAnimFrame(this.animloop.bind(this));
   }
@@ -227,7 +229,10 @@ Game.prototype.updateScore = function() {
 }
 
 Game.prototype.gameOver = function() {
-  document.getElementById(`replay_${this.playerIndex*PARALLEL_GAMES+this.gameIndex}`).style.visibility = 'visible';
+  if (!this.simulate_immediately) {
+    document.getElementById(`replay_${this.playerIndex*PARALLEL_GAMES+this.gameIndex}`).style.visibility = 'visible';
+  }
+  
   this.platforms.forEach(function(p, i) {
     p.y -= 12;
   });
@@ -244,9 +249,9 @@ Game.prototype.gameOver = function() {
   }
 
   if (!this.died_message_sent) {
-    this.GA.gameDied(this);
-    window.cancelAnimationFrame(this.requestAnimId);
+    //window.cancelAnimationFrame(this.requestAnimId);
     this.died_message_sent = true;
+    this.GA.gameDied(this);
   }
 
 }

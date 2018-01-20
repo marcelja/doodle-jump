@@ -2,6 +2,7 @@ var average_scores = Array();
 var deviations = Array();
 var times_called = 0;
 showStats = function () {
+  /*
   times_called += 1;
   if (times_called < NUMBER_OF_RUNS) {
     return;
@@ -41,4 +42,5 @@ showStats = function () {
     };
     var data = [playerScore, gameScore];
     Plotly.newPlot('statsCanvas', data);
+    */
 }

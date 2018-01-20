@@ -1,5 +1,6 @@
+allGames = [];
 function startOneGame(ctx, sb, sp, ip, ga, playerIndex, gameIndex, fast) {
-  var gameObj = new Game(ctx, sb, sp, ip, ga, playerIndex, gameIndex);
+  var gameObj = new Game(ctx, sb, sp, ip, ga, playerIndex, gameIndex, fast);
   gameObj.init();
   allGames.push(gameObj);
 }

@@ -8,7 +8,6 @@ window.requestAnimFrame = (function() {
 
 var width = 422;
 var height = 552;
-var allGames = [];
 
 function startAllGames() {
   SEEDS = Array.apply(null, Array(PARALLEL_GAMES)).map(function(){return Math.random()})
