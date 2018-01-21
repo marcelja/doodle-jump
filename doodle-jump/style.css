@@ -102,6 +102,13 @@ h3 a {color: #5a5816}
   z-index: -1;
 }
 
+#file-input {
+  position: absolute;
+  left: 25%;
+  top: 9%;
+  z-index: -1;
+}
+
 #stopButton {
   width: 105px;
   height: 31px;
