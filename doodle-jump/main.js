@@ -77,6 +77,28 @@ function exportModel(playerIndex){
 }
 
 
+function readModelFile(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    var model = JSON.parse(contents);
+    jsonModels = new Array(NUMBER_OF_PLAYERS);
+    jsonModels.fill(model);
+    GA.reset();
+    GA.createPopulationFromJson(jsonModels);
+    GA.alive = NUMBER_OF_PLAYERS * PARALLEL_GAMES;
+  };
+  reader.readAsText(file);
+}
+
+document.getElementById('file-input').addEventListener('change', readModelFile, false);
+
+
+
 function main() {
   var game = document.getElementById('game');
   var html = "";
