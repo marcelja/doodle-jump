@@ -55,12 +55,37 @@ function replay(gameIndex) {
   allGames[gameIndex].startReplay();
 }
 
+function exportModel(playerIndex){
+  var model = JSON.stringify(GA.Population[playerIndex].toJSON());
+  // var model = GA.Population[playerIndex].toJSON();
+
+  var file = new Blob([model], {type: 'text/plain'});
+  var download_elem = document.createElement("a");
+
+  var url = URL.createObjectURL(file);
+  download_elem.href = url;
+  var now = new Date(); 
+  var datetime = now.getFullYear()+'-'+ (now.getMonth()+1)+'-'+now.getDate(); 
+  datetime += '-'+now.getHours()+'-'+now.getMinutes()+'-'+now.getSeconds(); 
+  download_elem.download = 'model-' + datetime + '.txt';
+  document.body.appendChild(download_elem);
+  download_elem.click();
+  setTimeout(function() {
+    document.body.removeChild(download_elem);
+    window.URL.revokeObjectURL(url);  
+  }, 0);
+}
+
+
 function main() {
   var game = document.getElementById('game');
   var html = "";
   for (var playerIndex = 0; playerIndex < NUMBER_OF_PLAYERS; playerIndex++) {
     html += `<div class="wrapper" style="margin-bottom:30px">
-              <div style="margin-left:20px" >Network: ${playerIndex}</div>`;
+              <div style="margin-left:20px" >Network: ${playerIndex}
+                <button id="export_${playerIndex}" onclick="exportModel(${playerIndex})">Export model</button>
+              </div>`;
+              // <button id="export_${playerIndex}" onclick="export(${playerIndex})" style="visibility:hidden">Replay</button>`;
     for (var gameIndex = 0; gameIndex < PARALLEL_GAMES; gameIndex++) {
         html += `<div class="wrapper" id="game" style="padding-left:20px">
                   <canvas id="canvas_${playerIndex}${gameIndex}" style="margin-bottom:10px;margin-right:20px;margin-top:15px;border:1px solid #d3d3d3;"></canvas>
