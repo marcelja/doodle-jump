@@ -66,7 +66,7 @@ function Platform(game) {
   else if (game.score >= 500 && game.score < 1000) this.types = [1, 1, 1, 4];
   else if (game.score >= 100 && game.score < 500) this.types = [1, 1, 1, 1, 4];
   else this.types = [1];
-  this.type = this.types[Math.floor(Math.random() * this.types.length)];
+  this.type = this.types[Math.floor(game.rng.random() * this.types.length)];
 
   //We can't have two consecutive breakable platforms otherwise it will be impossible to reach another platform sometimes!
   if (this.type == 3 && game.broken < 1) {
