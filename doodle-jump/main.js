@@ -140,7 +140,7 @@ slider.oninput = function() {
 var NUMBER_OF_PLAYERS = 16;
 var TOP_UNIT_NUMBER = 4;
 var SPEED_UP_FACTOR = 1;
-var PARALLEL_GAMES = 2;
+var PARALLEL_GAMES = 3;
 
 document.getElementById('speedUpValue').innerHTML = SPEED_UP_FACTOR;
 

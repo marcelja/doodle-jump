@@ -59,13 +59,13 @@ function Platform(game) {
   else this.types = [1];
   */
 
-  if (game.score >= 5000) this.types = [2, 2, 2, 3, 3, 3, 4, 4, 4];
-  else if (game.score >= 2000 && game.score < 5000) this.types = [1, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4];
+  if (game.score >= 10000) this.types = [2, 2, 2, 4, 3];
+  else if (game.score >= 5000 && game.score < 10000) this.types = [1, 2, 3, 4, 4];
+  else if (game.score >= 2000 && game.score < 5000) this.types = [1, 1, 1, 2, 2, 3, 4, 4, 4, 4];
   else if (game.score >= 1000 && game.score < 2000) this.types = [1, 1, 1, 1, 3, 4, 4, 4];
-  else if (game.score >= 500 && game.score < 1000) this.types = [1, 1, 1, 1, 1, 3, 4, 4];
-  else if (game.score >= 100 && game.score < 500) this.types = [1, 1, 1, 1, 3];
-  else this.types = [1, 1, 1, 1, 1, 3];
-  this.types = [1];
+  else if (game.score >= 500 && game.score < 1000) this.types = [1, 1, 1, 4];
+  else if (game.score >= 100 && game.score < 500) this.types = [1, 1, 1, 1, 4];
+  else this.types = [1];
   this.type = this.types[Math.floor(Math.random() * this.types.length)];
 
   //We can't have two consecutive breakable platforms otherwise it will be impossible to reach another platform sometimes!
