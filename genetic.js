@@ -194,6 +194,7 @@ GeneticAlgorithm.prototype = {
 			// then it means there is no any bird which reached the first barrier!
 			// Playing as the God, we can destroy this bad population and try with another one.
 			this.createPopulation();
+			console.log('created new pop')
 		} else {
 			var mutatation_rate = this.lastBestFitness / (current_best_fitness + this.lastBestFitness);
 			mutatation_rate = Math.min(1, mutatation_rate);
@@ -203,7 +204,6 @@ GeneticAlgorithm.prototype = {
 			this.last_average_fitness = current_average_fitness;
 			this.mutateRate = mutatation_rate; // else set the mutatation rate to the real value
 		}
-			
 		// fill the rest of the next population with new units using crossover and mutation
 		for (var i=this.top_units; i<this.max_units; i++){
 			var parentA, parentB, offspring;
@@ -215,12 +215,8 @@ GeneticAlgorithm.prototype = {
 				parentB = Winners[1].toJSON();
 				offspring = this.crossOver(parentA, parentB);
 				*/
-				var string1 = this.Population[i].toJSON();
 				//console.log(this.Population[i]);
 				this.crossOverSave(this.Population[i], Winners[0], Winners[1]);
-				if (string1 == this.Population[i].toJSON()) {
-					console.log('NO');
-				}
 				//console.log(string1);
 				//console.log(this.Population[i]);
 
@@ -242,35 +238,13 @@ GeneticAlgorithm.prototype = {
 
 			// mutate the offspring
 			//offspring = this.mutation(offspring);
-			/*
-			var string3 = this.Population[i].toJSON();
-			console.log(string3);
-			//this.mutation(this.Population[i]);
-			var lastK, lastJ;
 
-				for (var k = 0; k < this.Population[i].neurons().length; k++) {
-			      for (var j in this.Population[i].neurons()[k].neuron.connections.projected) {
-			      	console.log(this.Population[i].neurons()[k].neuron.connections.projected[j].weight);
-			      	this.Population[i].neurons()[k].neuron.connections.projected[j].weight = this.mutate(this.Population[i].neurons()[k].neuron.connections.projected[j].weight);
-			      	console.log(this.Population[i].neurons()[k].neuron.connections.projected[j].weight);
-			      	console.log(k);
-			      	console.log(j);
-			      	lastK = k;
-			      	lastJ = j;
-			      	console.log(this.Population[i].neurons()[lastK].neuron.connections.projected[lastJ].weight);
-			      }
-			      console.log(this.Population[i].neurons()[lastK].neuron.connections.projected[lastJ].weight);
-			    }
-			console.log(this.Population[i].neurons()[lastK].neuron.connections.projected[lastJ].weight);
-			console.log(this.Population[i].toJSON());
-			console.log(this.Population[i].neurons()[lastK].neuron.connections.projected[lastJ].weight);
-			if (string3 == this.Population[i].toJSON()) {
-				console.log('NO');
-			}
-			*/
+			this.mutation(this.Population[i]);
+			
 			// create a new unit using the neural network from the offspring
 			//var newUnit = synaptic.Network.fromJSON(offspring);
 			//newUnit.index = this.Population[i].index;
+
 			this.Population[i].fitness = 0;
 			this.Population[i].score = 0;
 			this.Population[i].isWinner = false;
@@ -282,6 +256,8 @@ GeneticAlgorithm.prototype = {
 			this.Population[i] = newUnit;
 			*/
 		}
+		console.log(this.Population[this.top_units].layers.input.list[0].getBias())
+		console.log(this.Population[this.top_units].layers.input.list[0].connections.projected)
 
 		
 		// sort the units of the new population	in ascending order by their index
@@ -336,11 +312,7 @@ GeneticAlgorithm.prototype = {
 	},
 
 	crossOverSave : function(child, parentA, parentB) {
-		console.log(child.layers.input.list[0]);
-		console.log(child.layers.input.list[0]['bias']);
-		child.layers.input.list[0].bias = 99;
-		console.log(child.layers.input.list[0]['bias']);
-		console.log(child.layers.input.list[0]);
+		
 
 		var cutPoint = this.random(0, parentA.neurons().length-1);
 		var leftParent = null;
@@ -357,13 +329,13 @@ GeneticAlgorithm.prototype = {
 		// 2. right side after the crossover point is copied from the second parent
 		for (var i = 0; i < cutPoint; i++) {
 			child.neurons()[i].neuron.bias = leftParent.neurons()[i].neuron.bias;
-			child.neurons()[i].neuron.bias = 1;
+			//child.neurons()[i].neuron.bias = 3;
 		}
 		for (var i = cutPoint; i < parentA.neurons.length; i++){
 			child.neurons()[i].neuron.bias = rightParent.neurons()[i].neuron.bias;
-			child.neurons()[i].neuron.bias = 2;
+			//child.neurons()[i].neuron.bias = 4;
 		}
-		
+		//child.layers.input.list[0].setBias(99);
 	},
 	
 	// performs random mutations on the offspring
