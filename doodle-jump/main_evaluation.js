@@ -6,7 +6,7 @@ window.requestAnimFrame = (function() {
     window.setTimeout(callback, 1000 / 60);
   };
 })();*/
-
+var EVALUATION = true;
 var width = 422,
   height = 552;
 
@@ -24,11 +24,19 @@ async function startAllGames() {
 	if (GA[0].iteration == 200) {
 		return;
 	}
+  */
+  initStats();
   for (var j = 0; j < NUMBER_OF_RUNS; j++) {
   	startGeneration(j);
+    console.log(j);
+    GAS = new GeneticAlgorithm(NUMBER_OF_PLAYERS, PARALLEL_GAMES, TOP_UNIT_NUMBER);
+    GAS.reset();
+    GAS.createPopulation();
   }
-  */
-  startGeneration(0);
+  //draw Stats
+  showAllStats();
+  //startGeneration(0);
+
 }
 
 function startGeneration(run) {
@@ -56,10 +64,8 @@ function continueWithNextGeneration() {
   if (GENERATION_NUMBER >= NUMBER_OF_GENERATIONS) {
     GENERATION_NUMBER = 0;
     EXECUTED_RUN_NUMBER += 1;
-    
-  }
-  if (EXECUTED_RUN_NUMBER >= NUMBER_OF_RUNS) {
-    //draw stats?
+    GAS = null;
+    allGames = [];
     return;
   }
   return startGeneration(EXECUTED_RUN_NUMBER);
@@ -163,8 +169,8 @@ function generateInitalPopulations(parallel_experiments_number, game_number) {
 }
 
 
-var NUMBER_OF_GENERATIONS = 10;
-var NUMBER_OF_RUNS = 10;
+var NUMBER_OF_GENERATIONS = 100;
+var NUMBER_OF_RUNS = 5;
 var NUMBER_OF_PLAYERS = 16;
 var TOP_UNIT_NUMBER = 4;
 var SPEED_UP_FACTOR = 1;
@@ -182,14 +188,14 @@ document.getElementById('speedUpValue').innerHTML = SPEED_UP_FACTOR;
 
 main();
 var SEEDS = Array.apply(null, Array(PARALLEL_GAMES)).map(function(){return Math.random()})
+/*
 var GA = new Array(NUMBER_OF_RUNS);
 for (var i = 0; i < GA.length; i++) {
 	GA[i] = new GeneticAlgorithm(NUMBER_OF_PLAYERS,PARALLEL_GAMES,TOP_UNIT_NUMBER);
 	GA[i].reset();
 	GA[i].createPopulationFromJson(getInitialPopulation()[i]);
-	showStats();
 }
-
+*/
 var GAS = new GeneticAlgorithm(NUMBER_OF_PLAYERS, PARALLEL_GAMES, TOP_UNIT_NUMBER);
 GAS.reset();
 GAS.createPopulation();

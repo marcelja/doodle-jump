@@ -6,6 +6,7 @@ window.requestAnimFrame = (function() {
   };
 })();
 
+var EVALUATION = false;
 var width = 422;
 var height = 552;
 

@@ -1,46 +1,53 @@
+var scores = Array();
 var average_scores = Array();
 var deviations = Array();
 var times_called = 0;
-showStats = function () {
-  /*
-  times_called += 1;
-  if (times_called < NUMBER_OF_RUNS) {
-    return;
+
+initStats = function () {
+  for (var i = 0; i < NUMBER_OF_RUNS; i++) {
+    scores.push(Array());
+    scores[i].push(0);
   }
-  times_called = 0;
+}
+
+showStats = function () {
+  //just add the scores
+  scores[EXECUTED_RUN_NUMBER].push(GAS.batchGameScores[GAS.batchGameScores.length - 1]);
+}
+
+showAllStats = function () {
   console.log('drawing curve');
-    var iterations = [];
-    for (var i = 0; i <= GA[0].iteration; i += BATCH_SIZE) {
-        iterations.push(i);
-    }
+  console.log(scores);
+  var iterations = [];
+  for (var i = 0; i <= NUMBER_OF_GENERATIONS; i += BATCH_SIZE) {
+      iterations.push(i);
+  }
+  for (var i=0; i<scores[0].length; i++) {
     var average = 0;
-    for (var i = 0; i < NUMBER_OF_RUNS; i += 1) {
-      average += GA[i].batchGameScores[GA[i].batchGameScores.length - 1];
+    for (var j=0; j<NUMBER_OF_RUNS; j++) {
+      average += scores[j][i];
     }
-    console.log(NUMBER_OF_RUNS);
     average = average / NUMBER_OF_RUNS;
     average_scores.push(average);
-    console.log(average);
     var deviation = 0;
-    for (var i = 0; i < NUMBER_OF_RUNS; i += 1) {
-      deviation += (GA[i].batchGameScores[GA[i].batchGameScores.length - 1] - average) * (GA[i].batchGameScores[GA[i].batchGameScores.length - 1] - average);
+    for (var j = 0; j < NUMBER_OF_RUNS; j += 1) {
+      deviation += (scores[j][i] - average) * (scores[j][i] - average);
     }
     deviation = Math.sqrt(deviation / (NUMBER_OF_RUNS - 1));
     deviations.push(deviation);
-    console.log(deviation);
-    var gameScore = {
-      x: iterations,
-      y: average_scores,
-      type: 'scatter',
-      name: 'Average game score'
-    };
-    var playerScore = {
-      x: iterations, 
-      y: deviations, 
-      type: 'scatter',
-      name: 'Standard deviation'
-    };
-    var data = [playerScore, gameScore];
-    Plotly.newPlot('statsCanvas', data);
-    */
+  }
+  var gameScore = {
+    x: iterations,
+    y: average_scores,
+    type: 'scatter',
+    name: 'Average game score'
+  };
+  var playerScore = {
+    x: iterations, 
+    y: deviations, 
+    type: 'scatter',
+    name: 'Standard deviation'
+  };
+  var data = [playerScore, gameScore];
+  Plotly.newPlot('statsCanvas', data);
 }

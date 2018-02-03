@@ -56,7 +56,9 @@ GeneticAlgorithm.prototype = {
 			// create a new unit by generating a random Synaptic neural network
 			// with 12 neurons in the input layer, 20 neurons in the hidden layer and 3 neuron in the output layer
 			var newUnit = new synaptic.Architect.Perceptron(14, 20, 3);
-			
+			if (EVALUATION) {
+				newUnit.setOptimize(false);
+			}
 			// set additional parameters for the new unit
 			newUnit.index = i;
 			newUnit.fitness = 0;
@@ -77,7 +79,9 @@ GeneticAlgorithm.prototype = {
 		for (var i=0; i<this.max_units; i++){
 			// create a new unit from json
 			var newUnit = synaptic.Network.fromJSON(givenJsons[i]); 
-			
+			if (EVALUATION) {
+				newUnit.setOptimize(false);
+			}
 			// set additional parameters for the new unit
 			newUnit.index = i;
 			newUnit.fitness = 0;
@@ -87,7 +91,7 @@ GeneticAlgorithm.prototype = {
 			// add the new unit to the population 
 			this.Population.push(newUnit);
 		}
-		this.alive = this.max_units * this.parallel_games;
+		this.alive = this.max_units;
 	},
 	
 	// activates the neural network of an unit from the population 
@@ -173,13 +177,13 @@ GeneticAlgorithm.prototype = {
 	evolvePopulation : function(){
 		// select the top units of the current population to get an array of winners
 		// (they will be copied to the next population)
-		
+
 		sortedPopulation = this.Population.sort(
 			function(unitA, unitB){
 				return unitB.fitness - unitA.fitness;
 			}
 		);
-		
+
 		var current_best_fitness = sortedPopulation[0].fitness;
 		var current_average_fitness = this.Population.reduce(function (init, b) { return init + b.fitness}, 0) / this.max_units;
 
@@ -187,14 +191,13 @@ GeneticAlgorithm.prototype = {
 
 		// console.log("Fitness old: " + this.lastBestFitness + ", now: " +  current_best_fitness);
 
-        var Winners = this.selection(sortedPopulation);
-
+        var Winners = this.selection();
+        sortedPopulation = [];
 		if (this.mutateRate == 1 && Winners[0].fitness < 0){ 
 			// If the best unit from the initial population has a negative fitness 
 			// then it means there is no any bird which reached the first barrier!
 			// Playing as the God, we can destroy this bad population and try with another one.
 			this.createPopulation();
-			console.log('created new pop')
 		} else {
 			var mutatation_rate = this.lastBestFitness / (current_best_fitness + this.lastBestFitness);
 			mutatation_rate = Math.min(1, mutatation_rate);
@@ -204,85 +207,33 @@ GeneticAlgorithm.prototype = {
 			this.last_average_fitness = current_average_fitness;
 			this.mutateRate = mutatation_rate; // else set the mutatation rate to the real value
 		}
+			
 		// fill the rest of the next population with new units using crossover and mutation
 		for (var i=this.top_units; i<this.max_units; i++){
-			var parentA, parentB, offspring;
-			//this.Population[i].reset();
-			var cutPoint = this.random(0, 32);
 			if (i == this.top_units){
 				// offspring is made by a crossover of two best winners
-				
-				parentA = Winners[0].toJSON();
-				parentB = Winners[1].toJSON();
-				offspring = this.crossOver(parentA, parentB);
-				
-				//console.log(this.Population[i]);
-				this.copyNetwork(Winners[0], i);
-				this.crossOverSave(this.Population[i], Winners[0], Winners[1], cutPoint);
-				//console.log(string1);
-				//console.log(this.Population[i]);
-				/*
-				var json1 = Winners[0].toJSON();
-				var json2 = this.Population[i].toJSON();
-				console.log(json1);
-				console.log(Winners[1].toJSON());
-				console.log(json2);
-				debugger;
-				*/
+				this.crossOverSave(this.Population[i], Winners[0], Winners[1]);
 
 			} else if (i < this.max_units-2){
 				// offspring is made by a crossover of two random winners
-				
-				parentA = this.getRandomUnit(Winners).toJSON();
-				parentB = this.getRandomUnit(Winners).toJSON();
-				offspring = this.crossOver(parentA, parentB);
-				
-				this.copyNetwork(this.getRandomUnit(Winners), i);
-				this.crossOverSave(this.Population[i], this.getRandomUnit(Winners), this.getRandomUnit(Winners), cutPoint);
+				this.crossOverSave(this.Population[i], this.getRandomUnit(Winners), this.getRandomUnit(Winners));
 				
 			} else {
 				// offspring is a random winner
-				offspring = this.getRandomUnit(Winners).toJSON();
 				var randomWinner = this.getRandomUnit(Winners);
-				this.copyNetwork(randomWinner, i);
-				//randomWinner.reset();
-				this.crossOverSave(this.Population[i], randomWinner, randomWinner, cutPoint);
-				this.Population[i].optimize();
-				
-				
+				this.crossOverSave(this.Population[i], randomWinner, randomWinner);
 			}
 
 			// mutate the offspring
-			offspring = this.mutationOld(offspring);
 			this.mutation(this.Population[i]);
-			
-			// create a new unit using the neural network from the offspring
-			var newUnit = synaptic.Network.fromJSON(offspring);
-			newUnit.index = this.Population[i].index;
-
-			this.Population[i].fitness = 0;
-			this.Population[i].score = 0;
-			this.Population[i].isWinner = false;
-			this.Population[i].optimize();
-			
-			// update population by changing the old unit with the new one
-			
-			//this.Population[i].clear();
-			//delete this.Population[i];
-			this.Population[i] = newUnit;
-			
+			if (!EVALUATION) {
+				this.Population[i].optimize();
+			}
 		}
-		//console.log(this.Population[this.top_units].layers.input.list[0].getBias())
-		//console.log(this.Population[this.top_units].layers.input.list[0].connections.projected)
-
-		
-		// sort the units of the new population	in ascending order by their index
-		//this.Population.sort(function(unitA, unitB){
-		//});
 	},
 
 	// selects the best units from the current population
-	selection : function(sortedPopulation){
+	selection : function(){
 		// sort the units of the current population	in descending order by their fitness
 
 		this.top_units = 0;
@@ -311,7 +262,8 @@ GeneticAlgorithm.prototype = {
 	},
 	
 	// performs a single point crossover between two parents
-	crossOver : function(parentA, parentB) {
+	// deprecated
+	crossOverOld : function(parentA, parentB) {
 		// get a cross over cutting point
 		var cutPoint = this.random(0, parentA.neurons.length-1);
 		
@@ -326,16 +278,11 @@ GeneticAlgorithm.prototype = {
 
 		return this.random(0, 1) == 1 ? parentA : parentB;
 	},
-
-	copyNetwork : function(original, i) {
-		//json = original.toJSON();
-		//this.Population[i] = synaptic.Network.fromJSON(json);
-	},
-
+	
 	crossOverSave : function(child, parentA, parentB, cutPoint) {
 		
 
-		//var cutPoint = this.random(0, parentA.neurons().length-1);
+		var cutPoint = this.random(0, parentA.neurons().length-1);
 		//console.log(cutPoint);
 		var leftParent = null;
 		var rightParent = null;
@@ -372,9 +319,9 @@ GeneticAlgorithm.prototype = {
 	    for (var i = 0; i < child_connections.length; i++) {
 	    	child_connections[i].weight = parent_connections[i].weight;
 	    }
-	    child.optimize();
 	},
 
+	//deprecated
 	mutationOld : function (offspring){
 		// mutate some 'bias' information of the offspring neurons
 		for (var i = 0; i < offspring.neurons.length; i++){
@@ -388,7 +335,7 @@ GeneticAlgorithm.prototype = {
 		
 		return offspring;
 	},
-	
+
 	// performs random mutations on the offspring
 	mutation : function (offspring){
 		// mutate some 'bias' information of the offspring neurons
@@ -411,7 +358,7 @@ GeneticAlgorithm.prototype = {
 	
 	// mutates a gene
 	mutate : function (gene){
-		if (Math.random() < 1) {//this.mutateRate
+		if (Math.random() < this.mutateRate) {
 			var mutateFactor = 1 + ((Math.random() - 0.5) * 3 + (Math.random() - 0.5));
 			gene *= mutateFactor;
 		}
