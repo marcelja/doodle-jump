@@ -15,9 +15,18 @@ canvas {
 }
 
 .wrapper {
-  width: 440px;
   float:left;
   border: 1px solid black;
+}
+
+#game {
+    float: left;
+}
+
+#statsContainer {
+    float: left;
+    padding-bottom: 50px;
+    width: 100%;
 }
 
 #gamestats {
@@ -30,6 +39,7 @@ canvas {
 
 #gameContainer {
   float: left;
+  padding-left: 3%;
 }
 
 #scoreBoard {
@@ -89,6 +99,13 @@ h3 a {color: #5a5816}
   position: absolute;
   left: 25%;
   top: 3%;
+  z-index: -1;
+}
+
+#file-input {
+  position: absolute;
+  left: 25%;
+  top: 9%;
   z-index: -1;
 }
 
