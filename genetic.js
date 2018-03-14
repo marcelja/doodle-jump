@@ -164,6 +164,7 @@ GeneticAlgorithm.prototype = {
 	calculateFitness : function(game) {
 		// good players can get more than 0.4 score per loop, up to 0.48
         var fitness = Math.max(0, 0.8 * game.score * game.score - 0.2 * 0.1 * game.loops);
+        //var fitness = game.score -  0.2 * 0.1 * game.loops;
         if (this.fitnessPerGeneration[game.playerIndex]) {
             this.fitnessPerGeneration[game.playerIndex].push(fitness)
             this.scoresPerGeneration[game.playerIndex].push(game.score)
