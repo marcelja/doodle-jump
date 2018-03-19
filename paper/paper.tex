@@ -72,12 +72,44 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed nunc leo. Nam
 \section{Doodle Jump}
 \subsection{Original game}
 \subsection{Simplified implementation}
+
 \section{User Interface}
 
 \section{Network Layout}
 
 \section{Genetic algorithm}
+
+Whether or not the neural network performs well at playing the game very heavily depends on the specific parameters it uses: Each node possesses a bias and each edge has a weight. Even though the network is rather small, there are too many weights and biases to optimize them manually. 
+
+We therefore employ a genetic algorithm to obtain good parameters for the network. At any time, there is a number of different networks, so-called candidates, all playing the game independent of each other. Once they are all done, their performance is evaluated using a fitness function. The best candidates are then selected and combined in different ways to obtain the next generation of candidates. This combination process is called crossover. Finally, some parameters of some candidates are altered (mutated) to make it possible to generate any network. This new generation is then evaluated again, and the process is iterated.
+
+Doodle Jump is a game where each level is generated randomly. We want to end up with a network that is able to play any level well, regardless of the specific generated layout. The performance of any one network on any specific level may not necessarily be indicative of the networks ability to play the game overall. Therefore, each network plays several levels simultaneously, and each level is taken into account when evaluating the performance.
+
+In order to make the performance of different candidates comparable, all candidates of a generation play the same set of levels. However, for each generation a new set of levels is generated. Otherwise, we might end up with a network that excels in playing the specific set of levels used for evaluation but fails at any other level. Therefore, we can avoid overfitting.
+
+We want to choose the different parts of the genetic algorithm so that the learning process is as quick as possible, i.e. the average score achieved by the candidates after 100 generations should be as high as possible.
+
 \subsection{Fitness function}
+
+The fitness function measures the ability of the candidates to play the game well. Doodle Jump already provides a score which measures the height a player achieves. Since the games aim is to maximize that score, we used the score as initial fitness function.
+
+Beyond that, there are many other fitness function one could think of. For example, at the very beginning of the optimization process, many candidates might do nothing at all, while others move a little bit into the direction of the next platform, but not far enough to actually land on it. All candidates would thus achieve a score of zero, and the primitive fitness function would be unable to discriminate between them. Another fitness function, which rewards candidates that got closer to the platform they failed to jump on might speed up the learning process in the first few generations. It would also be helpful later on, when different candidates might fail at the same platform, thus achieving an equal score. However, such a fitness function would include prior knowledge about how to play the game well. We want to avoid using such fitness functions, since for other problems, prior knowledge might not be available, or might not lead to the optimal solution if available. 
+
+One measurement that does not involve any prior knowledge is time. Between two candidates, both achieving similar score, where one jumps once on every platform and the other has to jump twice on every platform before attempting the next jump, we want to prefer the first candidate since he is climbing twice as fast. Therefore, the required time should negatively affect the fitness of candidates.
+
+We tested multiple fitness functions achieving this in different ways:
+\begin{itemize}
+\item $fitness = score$
+\item $fitness = \frac{score}{time}$
+\item $fitness = score - time$
+\item $fitness = normalized(score) - normalized(time)$
+\item $fitness = score^2 - time$
+\item $fitness = normalized(score^2 - time)$
+\end{itemize}
+
+For each fitness function, we monitored the learning process for the first 100 generations. Since it is a random process with a high variance, we repeated this TODO times for each function. Figure TODO shows the test results.
+
+
 \subsection{Selection}
 \subsection{Crossover}
 \subsection{Mutation}
