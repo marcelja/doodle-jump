@@ -29,6 +29,9 @@
 \renewcommand{\figurename}{Fig.}
 \renewcommand{\captionlabelfont}{\bf}
 
+\newcommand{\quot}[1]{{``#1''}}
+
+
 \title{
 	\includegraphics*[width=0.4\textwidth]{hpi_logo_2017.eps}\\
 	\vspace{24pt}
@@ -71,6 +74,28 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed nunc leo. Nam
 
 \section{Doodle Jump}
 \subsection{Original game}
+The video game Doodle Jump is developed for mobile devices by Lima Sky\footnote{\url{http://www.limasky.com/}}. The player --- the so called \quot{doodler} --- has to jump on platforms in order to get a higher score. There are four different types of platforms:
+\begin{enumerate}
+    \item Regular ones, which neither move nor break
+    \item Horizontally moving platforms
+    \item Vertically moving platforms
+    \item Vanishable ones, which disappear after jumping on it once
+    \item Breaking platforms, where the doodler can't jump on
+\end{enumerate}
+The platforms are pseudo randomly located on the map. Pseudo randomly located means, that there will always be at least one platform, which is reachable from the previous one and non-breakable (See Fig. \ref{abb:doodlejumpgame}). In other words, there is always a way to reach an infinite score. However, the higher the achieved score, the more difficult the game becomes. The difficulty is reached via higher distances between the platforms and the increased usage of moving and vanishable platforms.
+
+The game also includes bonus features, such as propeller hats, jetpacks, rockets, springs or trampolines. These allow the player to jump higher and faster and therefore skip some platforms. Indeed, there are also \quot{enemies} in the game for example monsters, UFOs or black holes. If the doodler hits a monster or comes close to a black hole or UFO, it dies and the game is over. Monsters and UFOs can also be killed by shooting or jumping on them.
+
+To control the doodler the player of the game has to tilt his mobile devices left and right. If the doodler hits the left or right boundary of the game, it will appear on each other's side. Shooting is performed by tapping on the screen. The downrange depends on the tapping position. Once a player falls down and hits the bottom the game is over.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics*[width=0.4\textwidth]{images/game}\\
+\caption{Screenshot of original Doodle Jump game}
+\label{abb:doodlejumpgame}
+\end{center}
+\end{figure}
+
 \subsection{Simplified implementation}
 
 \section{User Interface}
