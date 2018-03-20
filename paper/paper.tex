@@ -1,5 +1,5 @@
 % Koma-Script Basisklasse
-\documentclass[a4paper,12pt,pagesize,headsepline,bibtotoc,titlepage]{scrartcl}
+\documentclass[a4paper,12pt,pagesize,headsepline,bibtotoc,titlepage,abstracton]{scrartcl}
 
 \usepackage[utf8]{inputenc}		% direkte Eingabe von Umlauten & Co. (Vorsicht: Encoding im Editor muss auch UTF-8 sein!)
 
@@ -56,8 +56,15 @@
 \begin{document}
 \maketitle
 \tableofcontents
+
 \newpage
 
+\begin{abstract}
+Teaching an AI to play a simple game has become an interesting research topic in the last couple of years. Games usually have a wide range of possible parameters to tune. Often times, simple neural networks can meet all the requirements and perform well. However, training the net often takes many hours or a few days. The training time can be reduced tremendously by using a neural nets in combination with a genetic algorith. In this paper we present how we applied a deep genetic algorithm on the game \quot{Doodle Jump}. We especially pay attention to the configuration of the genetic algorithm, describe the undertaken changes and show, which influence they have on the performance.
+\vskip 0.7cm
+\noindent \textbf{Keywords.} Deep Learning, Genetic Algorithm, Artificial Intelligence, Games
+
+\newpage
 
 \section{Introduction}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed nunc leo. Nam ac leo venenatis est commodo vehicula. Nulla justo nisl, venenatis id tincidunt id, porta ut felis. Cras eu justo ac nisi ornare commodo placerat at risus. Suspendisse ut urna tellus. Cras ut erat tempus justo aliquam laoreet. Praesent est neque, interdum quis convallis et, gravida sed arcu. Mauris bibendum, dui at ullamcorper luctus, arcu dolor laoreet nisi, ut facilisis dui enim a nisl. Sed odio risus, pulvinar suscipit feugiat pharetra, varius non est. Morbi pellentesque libero eu odio pulvinar semper. Praesent cursus adipiscing metus nec fermentum. Nullam malesuada euismod mi nec tincidunt. Nulla eget auctor velit. Mauris quam odio, blandit sit amet pharetra non, lobortis sed risus. Aliquam nec orci vel dolor suscipit tristique. Etiam quam eros, commodo at iaculis at, molestie eu metus. Maecenas viverra dui non magna suscipit sodales commodo justo iaculis (siehe Abbildung \ref{abb:test}).
@@ -74,6 +81,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed nunc leo. Nam
 
 \section{Doodle Jump}
 \subsection{Original game}
+
 The video game Doodle Jump is developed for mobile devices by Lima Sky\footnote{\url{http://www.limasky.com/}}. The player --- the so called \quot{doodler} --- has to jump on platforms in order to get a higher score. There are four different types of platforms:
 \begin{enumerate}
     \item Regular ones, which neither move nor break
@@ -98,6 +106,9 @@ To control the doodler the player of the game has to tilt his mobile devices lef
 
 \subsection{Simplified implementation}
 
+Since we do not want to perform the deep learning part on a mobile devices or within an emulator, we decided to use an implementation, which runs in a browser. We are using \quot{HTML5 Doodle Jump} by ntcnet83\footnote{\url{https://github.com/ntcnet83/html5-doodle-jump}}, which we found on github\footnote{\url{https://github.com/}}. This custom version of the is written in HTML5 and JavaScript. 
+
+MUCH TODO HERE!
 \section{User Interface}
 
 \section{Network Layout}
