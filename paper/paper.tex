@@ -31,6 +31,7 @@
 
 \newcommand{\quot}[1]{{``#1''}}
 
+\usepackage{color}
 
 \title{
 	\includegraphics*[width=0.4\textwidth]{hpi_logo_2017.eps}\\
@@ -60,24 +61,20 @@
 \newpage
 
 \begin{abstract}
-Teaching an AI to play a simple game has become an interesting research topic in the last couple of years. Games usually have a wide range of possible parameters to tune. Often times, simple neural networks can meet all the requirements and perform well. However, training the net often takes many hours or a few days. The training time can be reduced tremendously by using a neural nets in combination with a genetic algorith. In this paper we present how we applied a deep genetic algorithm on the game \quot{Doodle Jump}. We especially pay attention to the configuration of the genetic algorithm, describe the undertaken changes and show, which influence they have on the performance.
+Games usually have a wide range of possible parameters to tune. Often times, simple neural networks can meet all the requirements and perform well. However, training the net often takes many hours or a few days. The training time can be reduced tremendously by using neural nets in combination with a genetic algorithm. In this paper we present how we applied a deep genetic algorithm on the game \quot{Doodle Jump}. We especially pay attention to the configuration of the genetic algorithm, describe the undertaken changes and show, which influence they have on the performance.
 \vskip 0.7cm
 \noindent \textbf{Keywords.} Deep Learning, Genetic Algorithm, Artificial Intelligence, Games
 \end{abstract}
 \newpage
 
 \section{Introduction}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sed nunc leo. Nam ac leo venenatis est commodo vehicula. Nulla justo nisl, venenatis id tincidunt id, porta ut felis. Cras eu justo ac nisi ornare commodo placerat at risus. Suspendisse ut urna tellus. Cras ut erat tempus justo aliquam laoreet. Praesent est neque, interdum quis convallis et, gravida sed arcu. Mauris bibendum, dui at ullamcorper luctus, arcu dolor laoreet nisi, ut facilisis dui enim a nisl. Sed odio risus, pulvinar suscipit feugiat pharetra, varius non est. Morbi pellentesque libero eu odio pulvinar semper. Praesent cursus adipiscing metus nec fermentum. Nullam malesuada euismod mi nec tincidunt. Nulla eget auctor velit. Mauris quam odio, blandit sit amet pharetra non, lobortis sed risus. Aliquam nec orci vel dolor suscipit tristique. Etiam quam eros, commodo at iaculis at, molestie eu metus. Maecenas viverra dui non magna suscipit sodales commodo justo iaculis (siehe Abbildung \ref{abb:test}).
+Teaching an AI to play a simple game has become an interesting research topic in the last couple of years. AlphaGo\footnote{\url{https://deepmind.com/research/alphago/}} by Google Deepmind is probably the most famous example of computers playing games. The algorithm plays the board game Go, whose complexity is orders of magnitude higher than the complexity of chess. In a tournament against Lee Sedol (one of the world's best Go player) in 2016 the AI won four out of five games.
 
-\begin{figure}[hbp]
-\begin{center}
-\includegraphics*[width=0.75\textwidth]{beispiel.png}\\
-\caption{Eine Abbildung, Quelle: \cite{BMXNet17}}
-\label{abb:test}
-\end{center}
-\end{figure}
+We did something similar in our research seminar, but with a less complex game: Doodle Jump. The player of this video game has to jump on randomly located platforms in order to get higher and thus, get a higher score. In our approach we use a genetic algorithm in combination with neural networks ??/for the machine learning part. An artificial neural net (ANN) is a machine learning algorithm inspired by nature. It consists of neurons, which calculate an output based on an input similar to a biological nerve cell. Those neurons are connected with each other to enable an information flow within the network. In order to improve the performance of an ANN, many parameters --- for example the biases of the neurons or the weight of connections --- can be tuned.
 
-\section{Related Work}
+At this point we make use of the genetic algorithm. This algorithm is modelled on biological evolution. There are many individuals which form a population. Applied to our implementation, those are the different neural nets playing the game. After all players died, we select the best of them and perform crossover and mutation like in nature on those. Hence, we create a new generation, which is supposed to be better than the previous one. In this way, we always create better and better neural networks.
+
+In the next two sections, we introduce the basics of the Doodle Jump game in detail and give a rough overview of our user interface. After that, we pay special attention to the used neural network. In section \ref{sec:ga} we present our genetic algorithm, in particular with focus on the basic operations of this algorithm and its evalution. Finally, we conclude our work and show some interesting findings.
 
 \section{Doodle Jump}
 \subsection{Original game}
@@ -88,7 +85,7 @@ The video game Doodle Jump is developed for mobile devices by Lima Sky\footnote{
     \item Horizontally moving platforms
     \item Vertically moving platforms
     \item Vanishable ones, which disappear after jumping on it once
-    \item Breaking platforms, where the doodler can't jump on
+    \item Breaking platforms, where the doodler can not jump on
 \end{enumerate}
 The platforms are pseudo randomly located on the map. Pseudo randomly located means, that there will always be at least one platform, which is reachable from the previous one and non-breakable (See Fig. \ref{abb:doodlejumpgame}). In other words, there is always a way to reach an infinite score. However, the higher the achieved score, the more difficult the game becomes. The difficulty is reached via higher distances between the platforms and the increased usage of moving and vanishable platforms.
 
@@ -106,14 +103,24 @@ To control the doodler the player of the game has to tilt his mobile devices lef
 
 \subsection{Simplified implementation}
 
-Since we do not want to perform the deep learning part on a mobile devices or within an emulator, we decided to use an implementation, which runs in a browser. We are using \quot{HTML5 Doodle Jump} by ntcnet83\footnote{\url{https://github.com/ntcnet83/html5-doodle-jump}}, which we found on github\footnote{\url{https://github.com/}}. This custom version of the is written in HTML5 and JavaScript. 
+Since we do not want to perform the deep learning part on a mobile device or within an emulator, we decided to use an implementation, which runs in a browser. We are using \quot{HTML5 Doodle Jump} by ntcnet83\footnote{\url{https://github.com/ntcnet83/html5-doodle-jump}}, which we found on github\footnote{\url{https://github.com/}}. This custom version of the is written in HTML5 and JavaScript. The doodler can be control via left and right arrow keys. In contrast to the original implementation, this version of the game contains less features, which makes the game simpler at the end:
+\begin{itemize}
+\item Except springs, there are no other bonuses.
+\item There are no enemies. Hence, the only way to die is falling down.
+\item The feature shooting is not necessary and therefore not available.
+\item The game does not have vertically moving platforms.
+\item The difficulty changes after a certain score, but only through the usage of more moving and vanishable platforms. The distances between the platforms stay the same.
+\end{itemize}
 
-MUCH TODO HERE!
+Our machine learning part runs in the browser as well. We use the \textit{Synaptic} library\footnote{\url{https://github.com/cazala/synaptic}} in order to create our neural networks. This library provides a high level interface to simply initialize a perceptron. Furthermore, adapted the genetic algorithm implemented in the \textit{Genetic.js} library\footnote{\url{https://github.com/subprotocol/genetic-js}}. Both libraries are written in JavaScript.
+
+
 \section{User Interface}
 
 \section{Network Layout}
 
 \section{Genetic algorithm}
+\label{sec:ga}
 
 Whether or not the neural network performs well at playing the game very heavily depends on the specific parameters it uses: Each node possesses a bias and each edge has a weight. Even though the network is rather small, there are too many weights and biases to optimize them manually. 
 
