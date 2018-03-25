@@ -158,6 +158,26 @@ For each fitness function, we monitored the learning process for the first 100 g
 \subsection{Mutation}
 \subsection{Retaining best candidates}
 
+After all games died with one generation we select the top players of this run and reuse them without any modification in the next generation. The amount of retained candidates depends on the performance of the current run compared with the previous one. However, the number of players kept is limited to the range of three to five out of sixteen. In order to explain it in detail we use an example which is depicted in graphic \ref{abb:retaining}. It shows the players of three generations sorted by fitness.
+
+In the first generation we keep all top five players, since we can not compare them to another run. The only requirement is that the best player has a fitness of more than 0. Otherwise, we throw away the whole population due to the bad score.
+
+only 3
+4 worse than 5
+
+then 4 
+4 less than 3 doesnt matter, compare to all top 5
+prevents staying at 3 selected
+\begin{figure}[h]
+\begin{center}
+\includegraphics*[width=0.8\textwidth]{images/retain_candidates}\\
+\caption{Example of retained candidates}
+\label{abb:retaining}
+\end{center}
+\end{figure}
+
+
+
 \section{Interesting findings}
 \subsection{Disabling passing through walls}
 Very good, simple strategy: Always go right -> local optimum.
