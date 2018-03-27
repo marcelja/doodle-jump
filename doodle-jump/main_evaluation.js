@@ -170,7 +170,7 @@ function generateInitalPopulations(parallel_experiments_number, game_number) {
 
 
 var NUMBER_OF_GENERATIONS = 100;
-var NUMBER_OF_RUNS = 5;
+var NUMBER_OF_RUNS = 10;
 var NUMBER_OF_PLAYERS = 16;
 var TOP_UNIT_NUMBER = 4;
 var SPEED_UP_FACTOR = 1;

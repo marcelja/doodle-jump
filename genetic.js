@@ -20,11 +20,14 @@ var GeneticAlgorithm = function(max_units, parallel_games, top_units){
     this.scorePlayers = 0;
     this.scoresPerGeneration = {};
     this.fitnessPerGeneration = {};
+    this.timePerGeneration = {};
     this.batchGameScores = [0];
     this.batchPlayerScores = [0];
     this.lastBestFitness = 0;
     this.lastFitnessOfMaxTop = 0;
-
+    this.maxTime = 0;
+    this.maxScore = 0;
+    this.maxFitness = 0;
 }
 
 GeneticAlgorithm.prototype = {
@@ -39,12 +42,15 @@ GeneticAlgorithm.prototype = {
         this.alive = 0;
         this.fitnessPerGeneration = {};
         this.scoresPerGeneration = {};
+        this.timePerGeneration = {};
         this.scoreGames = 0;
         this.scorePlayers = 0;
         this.batchGameScores = [0];
         this.batchPlayerScores = [0];
 	    this.lastBestFitness = 0;
 	    this.lastFitnessOfMaxTop = 0;
+	    this.maxTime = 0;
+    	this.maxScore = 0;
 	},
 	
 	// creates a new population
@@ -112,13 +118,15 @@ GeneticAlgorithm.prototype = {
 	gameDied : function(game){
 		this.alive--;
 		if (this.alive == 0) {
-            this.averageScores()
+			this.recalcFitnesses();
+            this.averageScores();
             this.calculateStatsPerBatch();
             this.evolvePopulation();
 			this.iteration++;
             this.alive = this.max_units * this.parallel_games;
             this.fitnessPerGeneration = {};
             this.scoresPerGeneration = {};
+            this.timePerGeneration = {};
             restartAllGames();
 		}
 	},
@@ -160,15 +168,40 @@ GeneticAlgorithm.prototype = {
             this.scoreGames += this.Population.reduce(function (init, b) { return init + b.score}, 0);
         }
     },
+
+    // if fitness should include normalized values, they need to be calculated here
+    recalcFitnesses: function() {
+    	this.maxTime = [0,0];
+    	this.maxScore = [0,0];
+    	this.maxFitness = [0,0];
+    	for (var i = 0; i < this.Population.length; i++) {
+    		for (var j = 0; j < this.maxTime.length; j++) {
+    			this.maxTime[j] = Math.max(this.maxTime[j], this.timePerGeneration[i][j]);
+    			this.maxScore[j] = Math.max(this.maxScore[j], this.scoresPerGeneration[i][j]);
+    			this.maxFitness[j] = Math.max(this.maxFitness[j], this.fitnessPerGeneration[i][j]);
+    		}
+    	}
+    	for (var i = 0; i < this.Population.length; i++) {
+    		for (var j = 0; j < this.maxTime.length; j++) {
+    			//this.fitnessPerGeneration[i][j] = 1.0 * this.scoresPerGeneration[i][j] / this.maxScore[j] - 0.2 * this.timePerGeneration[i][j] / this.maxTime[j];
+    			//this.fitnessPerGeneration[i][j] = this.fitnessPerGeneration[i][j] / this.maxFitness[j];
+    		}
+    	}
+    },
  
 	calculateFitness : function(game) {
 		// good players can get more than 0.4 score per loop, up to 0.48
-        var fitness = Math.max(0, 0.8 * game.score * game.score - 0.2 * 0.1 * game.loops);
+		//var fitness = game.score;
+        //var fitness = Math.max(0, 0.8 * game.score * game.score - 0.2 * 0.1 * game.loops);
         //var fitness = game.score -  0.2 * 0.1 * game.loops;
+        var fitness = 1.0 * game.score / game.loops;
+        //var fitness = 0;
         if (this.fitnessPerGeneration[game.playerIndex]) {
+        	this.timePerGeneration[game.playerIndex].push(game.loops);
             this.fitnessPerGeneration[game.playerIndex].push(fitness)
             this.scoresPerGeneration[game.playerIndex].push(game.score)
         } else {
+        	this.timePerGeneration[game.playerIndex] = [game.loops];
             this.fitnessPerGeneration[game.playerIndex] = [fitness];
             this.scoresPerGeneration[game.playerIndex] = [game.score];
         }
@@ -187,8 +220,6 @@ GeneticAlgorithm.prototype = {
 
 		var current_best_fitness = sortedPopulation[0].fitness;
 		var current_average_fitness = this.Population.reduce(function (init, b) { return init + b.fitness}, 0) / this.max_units;
-
-		// Magic goes here
 
 		// console.log("Fitness old: " + this.lastBestFitness + ", now: " +  current_best_fitness);
 

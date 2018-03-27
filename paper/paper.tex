@@ -17,7 +17,7 @@
 \usepackage{hyperref} % Hyperlinks anklickbar
 \usepackage{ae,aecompl} % bessere Bildschirmschriftarten usw.
 \usepackage{epstopdf} % support eps 
-
+\usepackage{subcaption}
 \pagestyle{headings}
 
 % Abstand der Kopfzeile vom Text:
@@ -142,19 +142,68 @@ One measurement that does not involve any prior knowledge is time. Between two c
 
 We tested multiple fitness functions achieving this in different ways:
 \begin{itemize}
-\item $fitness = score$
-\item $fitness = \frac{score}{time}$
-\item $fitness = score - time$
-\item $fitness = normalized(score) - normalized(time)$
-\item $fitness = score^2 - time$
-\item $fitness = normalized(score^2 - time)$
+\item $fitness_1 = score$
+\item $fitness_2 = \frac{score}{time}$
+\item $fitness_3 = score - time$
+\item $fitness_4 = normalized(score - time)$
+\item $fitness_5 = score^2 - time$
+\item $fitness_6 = normalized(score^2 - time)$
 \end{itemize}
 
-For each fitness function, we monitored the learning process for the first 100 generations. Since it is a random process with a high variance, we repeated this TODO times for each function. Figure TODO shows the test results.
+For each fitness function, we monitored the learning process for the first 100 generations. Since it is a random process with a high variance, we repeated this 10 times for each function. Figure \ref{fig:fitness} shows the evaluation results. 
 
+\begin{figure}[hbp]
+\begin{center}
+\begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/score.png}
+    \caption{$score$}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/scoredivtime.png}
+    \caption{$\frac{score}{time}$}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/scoreminustime.png}
+    \caption{$score - time$}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/normscoreminustime.png}
+    \caption{$norm(score - time)$}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/scoresquared.png}
+    \caption{$score^2 - time$}
+\end{subfigure}
+\begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/normscoresquared.png}
+    \caption{$norm(score^2 - time)$}
+\end{subfigure}
+\caption{Evaluation of different fitness functions. On the x-axis are the number of generations, on the y-axis the average score (red curve) and its standard deviation (blue).}
+\label{fig:fitness}
+\end{center}
+\end{figure}
 
-\subsection{Selection}
-\subsection{Crossover}
+All functions lead to a learning where to expected score is rising close to linearly. Score divided by time leads to the slowest leaning, since it essentially just measures the (nearly constant) speed in which any candidate is traveling upwards, so the fitness is nearly constant as well. All other functions involving time perform better than just taking the score. $fitness_3$ is one of the simplest ways of rewarding for gained score while penalizing for taken time, whereas $fitness_5$ puts emphasis on score and only uses time to break ties between two candidates that obtained the same score. 
+
+Each candidate is playing multiple levels at once, at the fitness calculated for each level is averaged to obtain the fitness for the candidate. Consider two levels such that one of them is very easy and a high score is easily obtained and the other is very hard, where only a few candidates might get beyond the first platform. In that case, the average for both $fitness_3$ and especially $fitness_5$ is dominated by the performance of each candidate on the easy level, since it yields far more score compared to the hard level. If we want to put equal weight on each level regardless of difficulty, this can be achieved by normalizing the fitness for each level, and then taking the average. However, our tests show that, at least in the first 100 generations, this merely slightly slows down the learning process. Ultimately, $fitness_3$ turns out to be the best of the tested functions, featuring both a high average score after 100 generations and a high consistency, the standard deviation of the score being only about half the average score.
+
+\subsection{Selection and Crossover}
+
+After the fitness of each candidate has been determined, the $n$ top candidates are selected to generate offspring that form the next generation. Here, $n$ is a parameter that can either be chosen or dynamically adapted during the algorithm. Choosing a higher $n$ leads to more diverse offspring and the possibility to find small local optima that might not be found otherwise, but as their parents are worse, usually they can be expected to be worse as well.
+
+The crossover serves to combine two different candidates into a new, different candidate who inherits traits of both of them, much like two individuals having a child together. Our candidates are defined by two different traits: Their node biases and their edge weights. For the crossover, we order all nodes and choose a random cutoff point. All the child's nodes before the cutoff point take the bias of the corresponding node of the first parent, the rest gets the biases of the second parent. One parent is selected randomly and all edge weights are copied from it.
+
+We chose to select the best $n=4$ candidates as parents. The next generation consists of:
+
+\begin{itemize}
+\item All the parents, as they were before.
+\item One child made from the two best parents which is then mutated.
+\item Two parents that are chosen randomly and independent from each other, which are then mutated.
+\item For all remaining nine candidates, two random parents are chosen, they are crossed over and the resulting child is mutated.
+\end{itemize}
+
+Therefore, we achieve a good diversity between the candidates while still maintaining a high quality in the offspring.
+
 \subsection{Mutation}
 \subsection{Retaining best candidates}
 
@@ -176,11 +225,15 @@ After the next run we compare the best players again. Since we always focus on t
 
 
 
-\section{Interesting findings}
+\section{Implementation details}
 \subsection{Disabling passing through walls}
-Very good, simple strategy: Always go right -> local optimum.
 
-When disabled and with (score - time) fitness function: Optimum where players suicide as quickly as possible. 
+Initially when we started working on the project, there existed a huge local optimum where candidates that would choose to accelerate to the right (or left) constantly would quickly go so fast that they were able to hit a good number of platforms before falling down, therefore easily beating any initial candidates that tried to work with the input data in any way. This behavior did not resemble how a human would approach the game, nor was it visually appealing. It also was not a sophisticated strategy (as any information about the surroundings of the doodler would just be discarded) and had a rather low ceiling in terms of how many points could be achieved that way.
+
+In order to counteract this, we decided to modify the game in a way that any player touching the walls would die, instead of reappearing on the other side of the level. This lead to an interesting effect in combination with the third fitness function, $score - time$. Score is awarded only if at least one platform is being reached. Time, on the other hand, starts counting immediately. Therefore, a candidate that would slowly move into the direction of the first platform, but not fast enough to reach it before he would die, would get a negative fitness. Another candidate that always goes right, therefore hitting the right wall as soon as possible, also gets a negative fitness, but due to the speed of his suicide, he still gets a better fitness than the first candidate. Ultimately, after a few generations, all candidates had learn to commit suicide as quickly as possible. We could resolve this problem by treating every negative fitness as equal.
+
+In the end, we re-enabled passing through the wall, but limited the maximum speed the doodler could achieve, so that constantly accelerating in one direction was no longer a viable strategy.
+
 \subsection{Dealing with moving platforms}
 \subsection{Dealing with fake platforms}
 \subsection{Dealing with springs}
