@@ -49,5 +49,23 @@ showAllStats = function () {
     name: 'Standard deviation'
   };
   var data = [playerScore, gameScore];
-  Plotly.newPlot('statsCanvas', data);
+  var layout = {xaxis: {
+    title: 'Generations',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    }
+  },
+  yaxis: {
+    title: 'Score',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    },
+    range: [0, 550]
+  },
+  showlegend: false};
+  Plotly.newPlot('statsCanvas', data, layout);
 }
