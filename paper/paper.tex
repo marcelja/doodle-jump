@@ -118,7 +118,7 @@ Our machine learning part runs in the browser as well. We use the \textit{Synapt
 
 \section{User Interface}
 
-To start the genetic algorithm and inform about the current learning progress we implemented a user interface (UI). For that, we used the simplified Doodle Jump implementation as a fundamental (section \ref{sec:si}). Then some functionalities for the genetic algorithm had to be added. Fig. \ref{abb:ui} shows a screenshot of the UI which was taken after the game was played for 83 generations. The genetic algorithm currently is in the 84th generation. This is displayed in the top left corner. The 
+To start the genetic algorithm and inform about the learning progress we implemented a user interface (UI). For that, we used the simplified Doodle Jump implementation as a fundamental (section \ref{sec:si}). Then some functionalities for the genetic algorithm had to be added. Fig. \ref{abb:ui} shows a screenshot of the UI which was taken after the game was played for 83 generations. The genetic algorithm currently is in the 84th generation. This is displayed in the top left corner.
 
 \begin{figure}[h]
 \begin{center}
@@ -128,6 +128,22 @@ To start the genetic algorithm and inform about the current learning progress we
 \end{center}
 \end{figure}
 
+Multiple neural networks are playing concurrently and each neural network plays two games with a different platform arrangement. Those numbers (i.e. number of neural networks and number of games played by one neural network) can be configured in our application. However, the screenshot only shows two of those 16 neural networks. Nevertheless, the user can scroll down in the UI to inspect each game which is running at this point. The UI also has buttons to start, stop and resume the games.
+
+If the user wants to speed up the learning progress, the ``Game speed up factor''-slider can be used. With a high speed up factor (e.g. greater than 10) it is often difficult to see why a doodler missed a platform. For that, we implemented a replay feature. This feature is described in section \ref{sec:rdpm}.
+
+We wanted to add some outputs to inform about the overall learning progress. The outputs ``best score'', ``best fitness'' and ``best score per generation'' are displayed as values. These values help to understand if the neural networks are still improving. If the scores are not increasing, this is a good point to debug what the problem is. For example, the doodler could target platforms that are harder to reach than other platforms. Then the user could disable the speed up and he could precisely inspect situations where this happens. During our project this kind of debugging helped a few times. Mostly, we had to adjust the fitness function or input parameters for the genetic algorithm to solve such problems. Some of these details are explained in section \ref{sec:id}.
+
+The top right of our UI shows a chart (see Fig. \ref{abb:ui}). This chart contains the average scores of the best players and the average scores of all players. Each point in the chart is a combination of ten generations. This is more meaningful than making one point for each generation because sometimes good neural networks reach bad scores. For example, if the doodlers are unlucky with the random arrangement of platforms.
+
+\subsection{Export and import of neural network}
+
+The result of a long learning process is a neural network which should be able to play the game relatively good. To store a neural network the user can click on the ``Export model'' button to start a download of the network as a text file. At a later point, this text file can be uploaded in the UI. Then the genetic algorithm starts all games with the uploaded neural network. Thus, this feature makes it possible to continue the machine learning after a break or on another machine.
+
+\subsection{Replaying doodler's platform miss}
+\label{sec:rdpm}
+
+During the development of our application we thought that one feature could help us to understand and improve the machine learning component. After a long time of training some games reached very high scores. But the scores stopped to increase as fast as earlier. To see the end of the game we had to wait a long time without using a high speed up factor. Because of that we added a button which replays the last jumps of the doodler and shows how it missed a platform and died. Thereby, a high speed up factor can be used until the doodler dies. The replay button helped us a lot during developing and could be useful for the future work (see section \ref{sec:cafw}).
 
 \section{Network Layout}
 
@@ -238,6 +254,7 @@ After the next run we compare the best players again. Since we always focus on t
 
 
 \section{Implementation details}
+\label{sec:id}
 \subsection{Disabling passing through walls}
 
 Initially when we started working on the project, there existed a huge local optimum where candidates that would choose to accelerate to the right (or left) constantly would quickly go so fast that they were able to hit a good number of platforms before falling down, therefore easily beating any initial candidates that tried to work with the input data in any way. This behavior did not resemble how a human would approach the game, nor was it visually appealing. It also was not a sophisticated strategy (as any information about the surroundings of the doodler would just be discarded) and had a rather low ceiling in terms of how many points could be achieved that way.
@@ -250,6 +267,7 @@ In the end, we re-enabled passing through the wall, but limited the maximum spee
 \subsection{Dealing with fake platforms}
 \subsection{Dealing with springs}
 \section{Conclusion and Future Work}
+\label{sec:cafw}
 
 \newpage
 %%%% bibtex file %%%%%%
