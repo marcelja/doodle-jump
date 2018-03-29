@@ -102,6 +102,7 @@ To control the doodler the player of the game has to tilt his mobile devices lef
 \end{figure}
 
 \subsection{Simplified implementation}
+\label{sec:si}
 
 Since we do not want to perform the deep learning part on a mobile device or within an emulator, we decided to use an implementation, which runs in a browser. We are using \quot{HTML5 Doodle Jump} by ntcnet83\footnote{\url{https://github.com/ntcnet83/html5-doodle-jump}}, which we found on github\footnote{\url{https://github.com/}}. This custom version of the is written in HTML5 and JavaScript. The doodler can be control via left and right arrow keys. In contrast to the original implementation, this version of the game contains less features, which makes the game simpler at the end:
 \begin{itemize}
@@ -116,6 +117,17 @@ Our machine learning part runs in the browser as well. We use the \textit{Synapt
 
 
 \section{User Interface}
+
+To start the genetic algorithm and inform about the current learning progress we implemented a user interface (UI). For that, we used the simplified Doodle Jump implementation as a fundamental (section \ref{sec:si}). Then some functionalities for the genetic algorithm had to be added. Fig. \ref{abb:ui} shows a screenshot of the UI which was taken after the game was played for 83 generations. The genetic algorithm currently is in the 84th generation. This is displayed in the top left corner. The 
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics*[width=1\textwidth]{images/ui}\\
+\caption{Screenshot of our UI}
+\label{abb:ui}
+\end{center}
+\end{figure}
+
 
 \section{Network Layout}
 
