@@ -147,6 +147,8 @@ During the development of our application we thought that one feature could help
 
 \section{Network Layout}
 
+The interface between the Doodle Jump implementation (section \ref{sec:si}) and the genetic algorithm (section \ref{sec:ga}) is based on the input and output parameters of the neural network. The input of the neural network is the current information which a player has of the game. Section \ref{sec:ip} describes which input parameters were used. The output of the neural network is the action which the player is going to make. The actions of the Doodle Jump implementation are very simple. The player can either move left or move right or stop moving.
+
 \begin{figure}[h]
 \begin{center}
 \includegraphics*[width=0.75\textwidth]{images/network_layout}\\
@@ -154,6 +156,9 @@ During the development of our application we thought that one feature could help
 \label{abb:nl}
 \end{center}
 \end{figure}
+
+\subsection{Input parameters}
+\label{sec:ip}
 
 \section{Genetic algorithm}
 \label{sec:ga}
