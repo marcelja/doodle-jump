@@ -269,15 +269,19 @@ We chose to select the best $n=4$ candidates as parents. The next generation con
 Therefore, we achieve a good diversity between the candidates while still maintaining a high quality in the offspring.
 
 \subsection{Mutation}
+
+Mutation is one operation we perform on our neural networks. Analogous to mutation in biology it creates genetic diversity on the population. In terms of the perceptron this means conretely, that we change biases of neurons and weights of connections between those neurons. The mutation probability, also called mutation rate, depends on the performce of the previous population compared the current one. If the latest run has better results we decrease the mutation rate, because we do not want to change too much, which could possibly result in worse candidates. If the current run is worse than the one before, we increase the diversity by increasing the mutation probability. This possibility varies between 0.18 and 0.24.
+
+We perform mutation on the biases of neurons in the same we mutate the weights of the connections. First, we iterate over all elements. Each time a random float between zero and one is created If this random value is lower then the mutation rate we mutate the element, otherwise not. Then, the bias or weight is changed to the value of the formula $1 + ((Math.random() - 0.5) * 3 + (Math.random() - 0.5))$, which is at least $-1$ and $3$ at maximum.
 \subsection{Retaining best candidates}
 
-After all games died with one generation we select the top players of this run and reuse them without any modification in the next generation. The amount of retained candidates depends on the performance of the current run compared with the previous one. However, the number of players kept is limited to the range of three to five out of sixteen. The reason, why we have such a complex algorithm is, that we want to a high amount of good players and throw away a large number of bad ones. In order to explain it in detail we use an example which is depicted in graphic \ref{abb:retaining}. It shows the players of three generations sorted by fitness.
+After all games died with one generation we select the top players of this run and reuse them without any modification in the next generation. The amount of retained candidates depends on the performance of the current run compared with the previous one, similar to the mutation rate. However, the number of players kept is limited to the range of three to five out of sixteen. The reason, why we have such a complex algorithm is, that we want to a high amount of good players and throw away a large number of bad ones. In order to explain it in detail we use an example which is depicted in graphic \ref{abb:retaining}. It shows the players of three generations sorted by fitness.
 
 In the first generation we keep all top five players, since we can not compare them to another run. The only requirement is that the best player has a fitness of more than 0. Otherwise, we throw away the whole population due to the bad score.
 
 The second generation performs a little worse than the previous one. Hence, we will keep less candidates. First, we compare the top five players with the previous run. In this concrete example only two players are better than the last best five. We then also select the third player, because this is the minimum number of retained candidates. The main idea behind this lower limit is, that we do not want to throw away to many information.
 
-After the next run we compare the best players again. Since we always focus on the best five players, the number of reused candidates --- which us four now --- can increase again. That would not be the case, if we only compare the individuals with the previously retained ones. If we did that, we would have three bots and would stay at this number forever.
+After the next run we compare the best players again. Since we always focus on the best five players, the number of reused candidates --- which is four now --- can increase again. That would not be the case, if we only compare the individuals with the previously retained ones. If we did that, we would have three bots and would stay at this number forever.
 
 \begin{figure}[h]
 \begin{center}
