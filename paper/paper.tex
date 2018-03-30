@@ -300,8 +300,25 @@ In order to counteract this, we decided to modify the game in a way that any pla
 In the end, we re-enabled passing through the wall, but limited the maximum speed the doodler could achieve, so that constantly accelerating in one direction was no longer a viable strategy.
 
 \subsection{Dealing with moving platforms}
-\subsection{Dealing with fake platforms}
+
+In the beginning of our project, we disabled all platform types except the regular platforms. When everything was working fine with only using regular platforms we re-enabled the other types. One issue which we detected was that the doodler often missed moving platforms. It seemed that the algorithm learned to move the doodler immediately after a jump. By that, the doodler can stop moving when it is at the highest point and then fall straight down on the targeted platform. This is a good strategy because the doodler would not have any remaining horizontal velocity while jumping on the targeted platform. This makes the next jump easier (e.g. when it has to change the direction).
+
+First, we added an input parameter which describes in which direction the platform is moving ($-1$ for moving left, $1$ for moving right). We thought that the algorithm could predict at which location the platform will be when the doodler hits it. Unfortunately, the moving platforms change the direction when they reach a wall. This makes it almost impossible to predict the location of the moving platform.
+
+In our current implementation we have the input parameter ``is moving'' (see section \ref{sec:ip}). With this parameter and after a long learning period the moving platforms are handled pretty well.
+
 \subsection{Dealing with springs}
+
+The springs make the doodler jump very high. Normally, the two platforms above the platform with a spring would be the next two input platforms. But the high jump makes those two platforms move out of the bounds. Also other platforms would become reachable. Right after the doodler jumps on a spring the vertical speed is much higher than after a regular jump as well. We made use of this characteristic to create a solution.
+
+Our application waits until the vertical velocity reduces to the velocity which the doodler would have after a regular jump. Then we make the two platforms above the doodler the input platforms.
+
+\subsection{Dealing with breakable platforms}
+
+In our current application the neural networks seem to learn to either always jump on the next platform or to always jump on the second next platform. When you observe the games in an early state (e.g. in generation 20) the doodler sometimes focuses the next and sometimes the second next platform. Anyhow, in a later state it only focuses the second next platform in most of the runs. In a few runs it learns to only focus the next platform. Even breakable platforms are focused. We have a ``is breakable'' boolean in the input parameters which does not seem to help to prevent jumping on these types of platforms.
+
+For us this is difficult to comprehend. We also tried to increase the number of breakable platforms to make the learning easier. It did not improve anything, though. Maybe the genetic algorithm needs more time to learn how to avoid the breakable platforms. Adjusting some of the parameters of the machine learning component might helps as well. Unfortunately, we did not find a good solution, yet. This is an issue which could be addressed during the future work (see section \ref{sec:cafw}).
+
 \section{Conclusion and Future Work}
 \label{sec:cafw}
 
