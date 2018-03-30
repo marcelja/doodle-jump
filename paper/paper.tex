@@ -74,7 +74,7 @@ We did something similar in our research seminar, but with a less complex game: 
 
 At this point we make use of the genetic algorithm. This algorithm is modelled on biological evolution. There are many individuals which form a population. Applied to our implementation, those are the different neural nets playing the game. After all players died, we select the best of them and perform crossover and mutation like in nature on those. Hence, we create a new generation, which is supposed to be better than the previous one. In this way, we always create better and better neural networks.
 
-In the next two sections, we introduce the basics of the Doodle Jump game in detail and give a rough overview of our user interface. After that, we pay special attention to the used neural network. In section \ref{sec:ga} we present our genetic algorithm, in particular with focus on the basic operations of this algorithm and its evalution. Finally, we conclude our work and show some interesting findings.
+In the next two sections, we introduce the basics of the Doodle Jump game in detail and give a rough overview of our user interface. After that, we pay special attention to the used neural network. In section \ref{sec:ga} we present our genetic algorithm, in particular with focus on the basic operations of this algorithm and its evaluation. Finally, we conclude our work and show some interesting findings.
 
 \section{Doodle Jump}
 \subsection{Original game}
@@ -147,7 +147,11 @@ During the development of our application we thought that one feature could help
 
 \section{Network Layout}
 
-The interface between the Doodle Jump implementation (section \ref{sec:si}) and the genetic algorithm (section \ref{sec:ga}) is based on the input and output parameters of the neural network. The input of the neural network is the current information which a player has of the game. Section \ref{sec:ip} describes which input parameters were used. The output of the neural network is the action which the player is going to make. The actions of the Doodle Jump implementation are very simple. The player can either move left or move right or stop moving.
+A neural network is an important machine learning technology. It is inspired by neurons in the human brain. Essentially, it has input and output neurons. The goal is to calculate the values for the output neurons. A neural network also has multiple neurons in a so-called hidden layer. Each neuron in this hidden layer is connected to each input and output neuron. Neural networks often have more than one hidden layer. The layout of our network has only one hidden layer, though. The network that we are using is illustrated in figure \ref{abb:nl}. Connections between neurons are called edges and have weights. Additionally, all neurons have a bias. The weights and biases are calculated by the machine learning approach.
+
+The interface between the Doodle Jump implementation (section \ref{sec:si}) and the genetic algorithm (section \ref{sec:ga}) is based on the input and output parameters of the neural network.
+
+The input of the neural network is the information which a player has of the game at the current state. Section \ref{sec:ip} describes which input parameters were used. The output of the neural network is the action which the player is going to make. The actions of the Doodle Jump implementation are very simple. The player can either move left or move right or stop moving. The calculated values in the three output neurons are in the range from 0 to 1. The maximum value of these three outputs is used to determine the actual action for the doodler. When the outputs of the network for a given state would be $moveLeft: 0.21, moveRight: 0.07, stopMoving: 0.19$ the doodler would move to the left.
 
 \begin{figure}[h]
 \begin{center}
