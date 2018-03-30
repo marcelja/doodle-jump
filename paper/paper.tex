@@ -149,10 +149,6 @@ During the development of our application we thought that one feature could help
 
 A neural network is an important machine learning technology. It is inspired by neurons in the human brain. Essentially, it has input and output neurons. The goal is to calculate the values for the output neurons. A neural network also has multiple neurons in a so-called hidden layer. Each neuron in this hidden layer is connected to each input and output neuron. Neural networks often have more than one hidden layer. The layout of our network has only one hidden layer, though. The network that we are using is illustrated in figure \ref{abb:nl}. Connections between neurons are called edges and have weights. Additionally, all neurons have a bias. The weights and biases are calculated by the machine learning approach.
 
-The interface between the Doodle Jump implementation (section \ref{sec:si}) and the genetic algorithm (section \ref{sec:ga}) is based on the input and output parameters of the neural network.
-
-The input of the neural network is the information which a player has of the game at the current state. Section \ref{sec:ip} describes which input parameters were used. The output of the neural network is the action which the player is going to make. The actions of the Doodle Jump implementation are very simple. The player can either move left or move right or stop moving. The calculated values in the three output neurons are in the range from 0 to 1. The maximum value of these three outputs is used to determine the actual action for the doodler. When the outputs of the network for a given state would be $moveLeft: 0.21, moveRight: 0.07, stopMoving: 0.19$ the doodler would move to the left.
-
 \begin{figure}[h]
 \begin{center}
 \includegraphics*[width=0.75\textwidth]{images/network_layout}\\
@@ -161,8 +157,20 @@ The input of the neural network is the information which a player has of the gam
 \end{center}
 \end{figure}
 
+The interface between the Doodle Jump implementation (section \ref{sec:si}) and the genetic algorithm (section \ref{sec:ga}) is based on the input and output parameters of the neural network.
+
+The input of the neural network is the information which a player has of the game at the current state. Section \ref{sec:ip} describes which input parameters were used. The output of the neural network is the action which the player is going to make. The actions of the Doodle Jump implementation are very simple. The player can either move left or move right or stop moving. The calculated values in the three output neurons are in the range from 0 to 1. The maximum value of these three outputs is used to determine the actual action for the doodler. When the outputs of the network for a given state would be $moveLeft: 0.21, moveRight: 0.07, stopMoving: 0.19$ the doodler would move to the left.
+
 \subsection{Input parameters}
 \label{sec:ip}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics*[width=0.55\textwidth]{images/input}\\
+\caption{Example for input parameters}
+\label{abb:ip}
+\end{center}
+\end{figure}
 
 \section{Genetic algorithm}
 \label{sec:ga}
