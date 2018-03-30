@@ -78,6 +78,7 @@ In the next two sections, we introduce the basics of the Doodle Jump game in det
 
 \section{Doodle Jump}
 \subsection{Original game}
+\label{sec:og}
 
 The video game Doodle Jump is developed for mobile devices by Lima Sky\footnote{\url{http://www.limasky.com/}}. The player --- the so called \quot{doodler} --- has to jump on platforms in order to get a higher score. There are four different types of platforms:
 \begin{enumerate}
@@ -164,6 +165,12 @@ The input of the neural network is the information which a player has of the gam
 \subsection{Input parameters}
 \label{sec:ip}
 
+Figure \ref{abb:nl} shows that we have 12 input parameters. The first two parameters are the ``x-velocity'' and ``y-velocity'' of the doodler. ``x-velocity'' tells how fast the doodler is moving horizontally. The longer the doodler keeps moving in one direction the faster it is moving in this direction (until it reaches speed limits). A positive ``x-velocity'' value means that the doodler is moving to the right and a negative value means that it is moving to the left. There is no horizontal movement if ``x-velocity'' is 0.
+
+The ``y-velocity'' works similar with the vertical speed. The ``y-velocity'' has the highest value right after jumping on a platform. Then it starts decreasing until the doodler starts moving down and the ``y-velocity'' becomes negative.
+
+The other input parameters have information about the next two platforms. In future the third next platform could be added as in input (see section \ref{sec:cafw}). The next two platforms are mostly easier to reach than the third next, though. So we decided to only use the next two platforms. When the doodler jumps on a platform it should target one of the two platforms which are above that platform. With the simplified Doodle Jump implementation (section \ref{sec:si}) it is not necessary to jump on one platform twice. Thus, we always update the next two platforms after the doodler makes a jump. The two platforms both have the input parameters ``relative x-distance'', ``relative y-distance'', ``has spring'', ``is breakable'' and ``is moving''.
+
 \begin{figure}[h]
 \begin{center}
 \includegraphics*[width=0.55\textwidth]{images/input}\\
@@ -171,6 +178,10 @@ The input of the neural network is the information which a player has of the gam
 \label{abb:ip}
 \end{center}
 \end{figure}
+
+To clarify how the input parameters are calculated in a specific game state we created the example in figure \ref{abb:ip}. The ``x-velocity'' is $0.2$. So the doodler has almost no horizontal speed. The ``y-velocity'' is $7.8$ which is very high because the doodler just jumped on the blue platform. The next two platforms (the white and the green platform) are used for the input parameters. The white platform is vanishable and the green platform is a regular one (see section \ref{sec:og}). The center of the doodler and of the platforms are used to calculate the relative distances. Regarding the ``relative x-distance'' to the white platform it is shorter to pass through the right wall. So we always check which direction is shorter. In the end the genetic algorithm does not have to know where the walls are. The relative distances to the white platform are $192px$ and $12px$. The relative distances to the green platform are $-80px$ and $67px$. The vertical distances can also be negative when the doodler gets above the platforms. This are the 12 input parameters as an array: $[0.2, 7.8, 193, 12, 0, 0, 0, -80, 67, 0, 0, 0]$.
+
+``has spring'', ``is breakable'' and ``is moving'' are either 0 or 1. Because both input platforms have no spring, are not breakable and are not moving these values are 0 in the example. Since the doodler should jump on each platform only once (even the regular platforms) we do not distinguish vanishable (white) platforms and regular (green) platforms.
 
 \section{Genetic algorithm}
 \label{sec:ga}
