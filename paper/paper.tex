@@ -32,6 +32,7 @@
 \newcommand{\quot}[1]{{``#1''}}
 
 \usepackage{color}
+% \usepackage{subfig}
 
 \title{
 	\includegraphics*[width=0.4\textwidth]{hpi_logo_2017.eps}\\
@@ -74,13 +75,31 @@ We did something similar in our research seminar, but with a less complex game: 
 
 At this point we make use of the genetic algorithm. This algorithm is modelled on biological evolution. There are many individuals which form a population. Applied to our implementation, those are the different neural nets playing the game. After all players died, we select the best of them and perform crossover and mutation like in nature on those. Hence, we create a new generation, which is supposed to be better than the previous one. In this way, we always create better and better neural networks.
 
-In the paragraph we present some related work. In the following two sections, we introduce the basics of the Doodle Jump game in detail and give a rough overview of our user interface. After that, we pay special attention to the used neural network. In section \ref{sec:ga} we present our genetic algorithm, in particular with focus on the basic operations of this algorithm and its evaluation. Finally, we conclude our work and show some interesting findings.
+In the next paragraph we present some related work. In the following two sections, we introduce the basics of the Doodle Jump game in detail and give a rough overview of our user interface. After that, we pay special attention to the used neural network. In section \ref{sec:ga} we present our genetic algorithm, in particular with focus on the basic operations of this algorithm and its evaluation. Finally, we conclude our work and show some interesting findings.
 
 
 \section{Related work}
 
-There can be a broad range of bots playing different games on the internet. We could compare our approach with their work, which does not make sense when it comes to comparing the results. For this reason, we use a similar implementation for comparison. 
-TODO describe this: https://github.com/eshohet/doodle-jump-machine-learning
+A broad range of bots playing different games can be found on the internet. We could compare our approach with their work, which does not make sense in terms of comparing the results. For this reason, we use a similar implementation for comparison. The approach of \textit{Shohet et al.}\cite{eshohet} uses reinforcement learning for playing Doodle Jump. The game's implementation they use is exactly the same as we use.
+
+Shohet uses a Q-Learning algorithm, which is model-free. This technique depends on states. Depending on the current state an action will be calculated in order to go into the next state. Based on the impact of the action a reward will be awarded. If this action has a negative effect, for example the player falls down and dies, the evaluation is bad. Otherwise, the it will be positive. Based on those rewards, the algorithm learns when to use which actions in order to become better.
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{images/performance_others}
+  \caption{Performance of reinforcement learning\cite{eshohet}}
+  \label{fig:perf_other}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{images/performance_others}
+  \caption{\color{red}{TODO insert our image}}
+  \label{fig:our_perf}
+\end{subfigure}
+\end{figure}
 
 \section{Doodle Jump}
 \subsection{Original game}
@@ -111,7 +130,7 @@ To control the doodler the player of the game has to tilt his mobile devices lef
 \subsection{Simplified implementation}
 \label{sec:si}
 
-Since we do not want to perform the deep learning part on a mobile device or within an emulator, we decided to use an implementation, which runs in a browser. We are using \quot{HTML5 Doodle Jump} by ntcnet83\footnote{\url{https://github.com/ntcnet83/html5-doodle-jump}}, which we found on github\footnote{\url{https://github.com/}}. This custom version of the is written in HTML5 and JavaScript. The doodler can be control via left and right arrow keys. In contrast to the original implementation, this version of the game contains less features, which makes the game simpler at the end:
+Since we do not want to perform the deep learning part on a mobile device or within an emulator, we decided to use an implementation, which runs in a browser. We are using \quot{HTML5 Doodle Jump} by Cong Nguyen\footnote{\url{https://github.com/ntcnet83/html5-doodle-jump}}, which we found on github\footnote{\url{https://github.com/}}. This custom version of the is written in HTML5 and JavaScript. The doodler can be control via left and right arrow keys. In contrast to the original implementation, this version of the game contains less features, which makes the game simpler at the end:
 \begin{itemize}
 \item Except springs, there are no other bonuses.
 \item There are no enemies. Hence, the only way to die is falling down.
