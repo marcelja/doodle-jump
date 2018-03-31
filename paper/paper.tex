@@ -79,27 +79,11 @@ In the next paragraph we present some related work. In the following two section
 
 
 \section{Related work}
+\label{sec:rw}
 
 A broad range of bots playing different games can be found on the internet. We could compare our approach with their work, which does not make sense in terms of comparing the results. For this reason, we use a similar implementation for comparison. The approach of \textit{Shohet et al.}\cite{eshohet} uses reinforcement learning for playing Doodle Jump. The game's implementation they use is exactly the same as we use.
 
 Shohet uses a Q-Learning algorithm, which is model-free. This technique depends on states. Depending on the current state an action will be calculated in order to go into the next state. Based on the impact of the action a reward will be awarded. If this action has a negative effect, for example the player falls down and dies, the evaluation is bad. Otherwise, it will be positive. Based on those rewards, the algorithm learns when to use which actions in order to become better.
-
-
-\begin{figure}
-\centering
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{images/performance_others}
-  \caption{Performance of reinforcement learning\cite{eshohet}}
-  \label{fig:perf_other}
-\end{subfigure}%
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{images/performance_others}
-  \caption{\color{red}{TODO insert our image}}
-  \label{fig:our_perf}
-\end{subfigure}
-\end{figure}
 
 \section{Doodle Jump}
 \subsection{Original game}
@@ -347,6 +331,24 @@ Our application waits until the vertical velocity reduces to the velocity which 
 In our current application the neural networks seem to learn to either always jump on the next platform or to always jump on the second next platform. When you observe the games in an early state (e.g. in generation 20) the doodler sometimes focuses the next and sometimes the second next platform. Anyhow, in a later state it only focuses the second next platform in most of the runs. In a few runs it learns to only focus the next platform. Even breakable platforms are focused. We have a ``is breakable'' boolean in the input parameters which does not seem to help to prevent jumping on these types of platforms.
 
 For us this is difficult to comprehend. We also tried to increase the number of breakable platforms to make the learning easier. It did not improve anything, though. Maybe the genetic algorithm needs more time to learn how to avoid the breakable platforms. Adjusting some of the parameters of the machine learning component might helps as well. Unfortunately, we did not find a good solution, yet. This is an issue which could be addressed during the future work (see section \ref{sec:cafw}).
+
+\subsection{Comparison to other project}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{images/performance_others}
+  \caption{Performance of reinforcement learning\cite{eshohet}}
+  \label{fig:perf_other}
+\end{subfigure}%
+\begin{subfigure}{.6\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{images/our_performance}
+  \caption{Performance of our implementation}
+  \label{fig:our_perf}
+\end{subfigure}
+\end{figure}
 
 \section{Conclusion and Future Work}
 \label{sec:cafw}
